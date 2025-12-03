@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "812723859944",
+    "project_id": "equiply-c3881",
+    "storage_bucket": "equiply-c3881.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:812723859944:android:f2efcab44d77fed8fa345d",
+        "android_client_info": {
+          "package_name": "com.example.equiply"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDSGqm1Ku4RuWPFXNJW34UfrKMSfU-6O14"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
