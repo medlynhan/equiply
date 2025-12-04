@@ -1,4 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <item
+        android:id="@+id/navigation_home"
+        android:title="Beranda"
+        android:icon="@drawable/home_icon"/>
+
+    <item
+        android:id="@+id/navigation_box"
+        android:title="Alat"
+        android:icon="@drawable/box_icon"/>
+
+    <item
+        android:id="@+id/navigation_history"
+        android:title="Riwayat"
+        android:icon="@drawable/history_icon"/>
+
+    <item
+        android:id="@+id/navigation_notification"
+        android:title="Notifikasi"
+        android:icon="@drawable/notification_icon"/>
+
+    <item
+        android:id="@+id/navigation_profile"
+        android:title="Profil"
+        android:icon="@drawable/profile_icon"/>
+
 </menu>

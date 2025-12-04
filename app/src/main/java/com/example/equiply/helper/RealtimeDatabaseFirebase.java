@@ -1,0 +1,121 @@
+package com.example.equiply.helper;
+
+import android.content.Context;
+import android.net.Uri;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+
+import com.example.equiply.model.Tool;
+import com.example.equiply.model.User;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.function.Consumer;
+
+public class RealtimeDatabaseFirebase {
+
+    private final DatabaseReference mDatabase;
+    private final CloudinaryHelper cloudinaryHelper;
+
+    public RealtimeDatabaseFirebase(Context context) {
+        this.mDatabase = FirebaseDatabase.getInstance().getReference();
+        this.cloudinaryHelper = new CloudinaryHelper(context);
+    }
+
+    public void addNewUser(Context context,String uid, String name, String nim, String email){
+        User newUser = new User(uid, name, nim, email);
+        mDatabase.child("users").child(uid).setValue(newUser).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    Toast.makeText(context, "Account created and User Data Saved", Toast.LENGTH_SHORT).show();
+
+                } else {
+                    Toast.makeText(context, "Failed Saved User Data", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+    }
+
+
+    public void getUserByID(String id, Consumer<User> callback){
+        mDatabase.child("users").child(id).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.exists()){
+                    User user =  snapshot.getValue(User.class);
+                    callback.accept(user);
+                }else{
+                    callback.accept(null);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                callback.accept(null);
+            }
+        });
+
+    }
+
+    public void addNewTools(Context context, Uri imageUri, String id, String name, String description) {
+        cloudinaryHelper.uploadImage(imageUri, imageUrl -> {
+                    Toast.makeText(context, "Gambar berhasil diunggah, menyimpan data...", Toast.LENGTH_SHORT).show();
+                    Tool newTool = new Tool(id, name, description, "Tersedia", imageUrl,"Baik");
+
+                    mDatabase.child("tools").child(id).setValue(newTool).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(context, "Tool baru berhasil ditambahkan!", Toast.LENGTH_LONG).show();
+                            } else {
+                                Toast.makeText(context, "Gagal menyimpan data tool ke database.", Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    });
+                },
+
+                errorMessage -> {
+                    Toast.makeText(context, "Gagal: " + errorMessage, Toast.LENGTH_LONG).show();
+                }
+        );
+    }
+
+    public void getAllTools(Consumer<ArrayList<Tool>> callback) {
+        mDatabase.child("tools").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                ArrayList<Tool> toolList = new ArrayList<>();
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot toolSnapshot : dataSnapshot.getChildren()) {
+                        Tool tool = toolSnapshot.getValue(Tool.class);
+                        if (tool != null) {
+                            toolList.add(tool);
+                        }
+                    }
+                }
+                callback.accept(toolList);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                callback.accept(new ArrayList<>());
+            }
+        });
+    }
+
+
+
+
+
+
+
+}

@@ -27,7 +27,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/back_icon"
-            app:tint="@color/white"
+            app:tint="@color/white_modif"
             android:padding="20dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
@@ -36,15 +36,15 @@
             android:id="@+id/loginTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="30sp"
+            android:textSize="27sp"
             android:textStyle="bold"
             android:gravity="center"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="10dp"
             android:text="@string/DaftarAkun"
-            android:textColor="@color/white"
+            android:textColor="@color/white_modif"
             app:layout_constraintBottom_toTopOf="@+id/loginNote"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
+            app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
             android:id="@+id/loginNote"
@@ -53,8 +53,8 @@
             android:textSize="18sp"
             android:textStyle="bold"
             android:gravity="center"
-            android:textColor="@color/white"
-            android:layout_marginBottom="130dp"
+            android:textColor="@color/white_modif"
+            android:layout_marginBottom="120dp"
             android:text="Buat akun baru untuk melanjutkan"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -92,7 +92,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/nama"
-                android:textColor="@color/black"
+                android:textColor="@color/black_modif"
                 android:textSize="16sp"/>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -117,7 +117,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/NIM"
-                android:textColor="@color/black"
+                android:textColor="@color/black_modif"
                 android:textSize="16sp"/>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -142,7 +142,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/email"
-                android:textColor="@color/black"
+                android:textColor="@color/black_modif"
                 android:textSize="16sp"/>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -167,7 +167,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/password"
-                android:textColor="@color/black"
+                android:textColor="@color/black_modif"
                 android:textSize="16sp"/>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -193,7 +193,7 @@
                 android:layout_height="wrap_content"
                 android:backgroundTint="@color/blue_medium"
                 android:text="@string/register"
-                android:textColor="@color/white"
+                android:textColor="@color/white_modif"
                 android:textSize="18sp"
                 app:cornerRadius="8dp"
                 android:padding="15dp"

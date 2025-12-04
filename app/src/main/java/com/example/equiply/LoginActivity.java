@@ -1,38 +1,32 @@
 package com.example.equiply;
 
-import static android.content.ContentValues.TAG;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+import com.example.equiply.helper.AuthFirebase;
+import com.example.equiply.student_activity.HomeDashboardActivity;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 public class LoginActivity extends AppCompatActivity {
-    private FirebaseAuth mAuth;
-    ImageView backIcon;
-    TextView goToRegister;
-    TextInputEditText emailET, passwordET;
-    MaterialButton loginBtn;
+
+    private AuthFirebase auth;
+    private ImageView backIcon;
+    private TextView goToRegister;
+    private TextInputEditText emailET, passwordET;
+    private MaterialButton loginBtn;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,12 +39,9 @@ public class LoginActivity extends AppCompatActivity {
             return insets;
         });
 
-        mAuth = FirebaseAuth.getInstance();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser != null){
-            Intent intent = new Intent(LoginActivity.this, HomeDashboardActivity.class);
-            startActivity(intent);
-        }
+        auth = new AuthFirebase(this);
+        emailET = findViewById(R.id.email);
+        passwordET = findViewById(R.id.password);
 
         backIcon = findViewById(R.id.backIcon);
         backIcon.setOnClickListener(new View.OnClickListener() {
@@ -71,6 +62,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+
         loginBtn = findViewById(R.id.loginBtn);
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,23 +80,9 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(LoginActivity.this, "Enter password",Toast.LENGTH_SHORT).show();
                 }
 
-                mAuth.signInWithEmailAndPassword(email, password)
-                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()) {
-                                    Toast.makeText(LoginActivity.this, "Login Success.",
-                                            Toast.LENGTH_SHORT).show();
-                                    Intent intent = new Intent(LoginActivity.this, HomeDashboardActivity.class);
-                                    startActivity(intent);
-                                } else {
-                                    // If sign in fails, display a message to the user.
-                                    Toast.makeText(LoginActivity.this, "Login Failed.",
-                                            Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
+                auth.login(LoginActivity.this,email,password);
             }
+
         });
 
     }

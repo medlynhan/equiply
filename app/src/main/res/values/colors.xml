@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="black_modif">#000000</color>
+    <color name="white_modif">#FFFFFF</color>
 
     <!-- blue-->
     <color name="blue_light">#A8E6F2</color>
     <color name="sky_blue">#42BCF4</color>
-    <color name="blue_medium">#519FC1</color>
-    <color name="blue_dark">#036189</color>
+    <color name="blue_medium">#3397C3</color>
+    <color name="blue_dark">#015C83</color>
 
     <!-- gray-->
     <color name="gray_light">#D9D9D9</color>

@@ -12,7 +12,25 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Equiply">
         <activity
-            android:name=".HomeDashboardActivity"
+            android:name=".admin_activity.AdminDashboardActivity"
+            android:exported="false" />
+        <activity
+            android:name=".admin_activity.AddToolActivity"
+            android:exported="false" />
+        <activity
+            android:name=".student_activity.NotificationActivity"
+            android:exported="false" />
+        <activity
+            android:name=".student_activity.ToolListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".student_activity.HistoryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".student_activity.ProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".student_activity.HomeDashboardActivity"
             android:exported="false" />
         <activity
             android:name=".LoginActivity"

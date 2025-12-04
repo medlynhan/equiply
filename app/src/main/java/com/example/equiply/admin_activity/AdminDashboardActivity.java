@@ -1,4 +1,4 @@
-package com.example.equiply;
+package com.example.equiply.admin_activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,42 +10,31 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.equiply.R;
 import com.google.android.material.button.MaterialButton;
 
-public class MainActivity extends AppCompatActivity {
+public class AdminDashboardActivity extends AppCompatActivity {
 
-    MaterialButton loginBtn, registerBtn;
+    private MaterialButton goToAddToolPage;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_admin_dashboard);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
-        loginBtn = findViewById(R.id.loginBtn);
-        registerBtn = findViewById(R.id.registerBtn);
-
-        loginBtn.setOnClickListener(new View.OnClickListener() {
+        goToAddToolPage = findViewById(R.id.goToAddToolPage);
+        goToAddToolPage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                Intent intent = new Intent(AdminDashboardActivity.this,AddToolActivity.class);
                 startActivity(intent);
             }
         });
-
-        registerBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
-                startActivity(intent);
-            }
-        });
-
-
-
     }
+
+
 }

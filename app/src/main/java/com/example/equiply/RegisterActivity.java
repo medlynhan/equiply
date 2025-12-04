@@ -1,11 +1,8 @@
 package com.example.equiply;
 
-import static android.content.ContentValues.TAG;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -13,30 +10,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.example.equiply.model.User;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+import com.example.equiply.helper.AuthFirebase;
+import com.example.equiply.helper.RealtimeDatabaseFirebase;
+import com.example.equiply.student_activity.HomeDashboardActivity;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    private FirebaseAuth mAuth;
-    private FirebaseDatabase firebaseDatabase;
-    private DatabaseReference mDatabase;
+    private AuthFirebase auth;
+    private RealtimeDatabaseFirebase db;
     private TextInputEditText emailET, passwordET,nameET, NIMET;
     private Button registerBTN;
 
@@ -54,9 +41,13 @@ public class RegisterActivity extends AppCompatActivity {
             return insets;
         });
 
-        mAuth = FirebaseAuth.getInstance();
-        firebaseDatabase = FirebaseDatabase.getInstance();
-        mDatabase = firebaseDatabase.getReference();
+        auth = new AuthFirebase(this);
+        db = new RealtimeDatabaseFirebase(this);
+        nameET  = findViewById(R.id.name);
+        NIMET = findViewById(R.id.NIM);
+        emailET = findViewById(R.id.email);
+        passwordET = findViewById(R.id.password);
+        registerBTN = findViewById(R.id.btnRegister);
 
 
         backIcon = findViewById(R.id.backIcon);
@@ -77,12 +68,6 @@ public class RegisterActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-        nameET  = findViewById(R.id.name);
-        NIMET = findViewById(R.id.NIM);
-        emailET = findViewById(R.id.email);
-        passwordET = findViewById(R.id.password);
-        registerBTN = findViewById(R.id.btnRegister);
 
 
         registerBTN.setOnClickListener(new View.OnClickListener() {
@@ -125,71 +110,7 @@ public class RegisterActivity extends AppCompatActivity {
                     return;
                 }
 
-                mAuth.createUserWithEmailAndPassword(email, password)
-                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()) {
-                                    // LOG 1: Konfirmasi blok if dimasuki
-                                    Log.d(TAG, "STEP 1: Authentication successful. Entering main block.");
-
-                                    FirebaseUser user = mAuth.getCurrentUser();
-
-                                    // LOG 2: Cek apakah objek FirebaseUser null atau tidak
-                                    if (user == null) {
-                                        Log.e(TAG, "STEP 2 ERROR: mAuth.getCurrentUser() returned null even after successful auth!");
-                                        Toast.makeText(RegisterActivity.this, "Error: Could not get user session.", Toast.LENGTH_LONG).show();
-                                        return; // Hentikan eksekusi
-                                    }
-                                    Log.d(TAG, "STEP 2: FirebaseUser object is not null.");
-
-                                    String uid = user.getUid();
-                                    // LOG 3: Cek apakah UID berhasil didapatkan
-                                    Log.d(TAG, "STEP 3: Successfully retrieved UID: " + uid);
-
-                                    // Buat objek POJO
-                                    User newUser = new User(uid, name, nim, email);
-                                    // LOG 4: Cek apakah objek POJO User berhasil dibuat
-                                    Log.d(TAG, "STEP 4: POJO 'User' object created successfully.");
-
-                                    // LOG 5: Tepat sebelum memanggil .setValue()
-                                    Log.d(TAG, "STEP 5: Preparing to call .setValue() on database path: /users/" + uid);
-
-                                    mDatabase.child("users").child(uid).setValue(newUser).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-                                            // LOG 6: Konfirmasi OnCompleteListener untuk database dijalankan
-                                            Log.d(TAG, "STEP 6: Database onComplete listener has been triggered.");
-                                            if (task.isSuccessful()) {
-                                                // Ini adalah log jika SEMUANYA berhasil
-                                                Log.d(TAG, "FINAL SUCCESS: User data saved successfully.");
-                                                Toast.makeText(RegisterActivity.this, "Account created and User Data Saved", Toast.LENGTH_SHORT).show();
-                                                Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
-                                                startActivity(intent);
-                                                finish();
-                                            } else {
-                                                // Ini adalah log jika HANYA penyimpanan database yang gagal
-                                                Log.e(TAG, "DATABASE FAILURE: Failed to save user data.", task.getException());
-                                                Toast.makeText(RegisterActivity.this, "Database Error: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
-                                            }
-                                        }
-                                    });
-
-                                    // LOG 7: Tepat setelah memanggil .setValue() (menunjukkan bahwa pemanggilan tidak nge-block)
-                                    Log.d(TAG, "STEP 7: Call to .setValue() has been dispatched. Waiting for listener...");
-
-
-
-
-
-                                } else {
-                                    Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                                    Toast.makeText(RegisterActivity.this, "Authentication failed.",
-                                            Toast.LENGTH_SHORT).show();
-
-                                }
-                            }
-                        });
+                auth.register(RegisterActivity.this,name,nim,email,password);
 
             }
         });
