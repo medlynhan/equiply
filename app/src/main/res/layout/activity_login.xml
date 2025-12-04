@@ -105,7 +105,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/email"
-                    android:text="@string/masukkanEmail"
+                    android:hint="@string/masukkanEmail"
+                    android:inputType="textEmailAddress"
                     android:textColor="@color/gray_dark" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -130,7 +131,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/password"
-                    android:text="@string/masukkanPassword"
+                    android:hint="@string/masukkanPassword"
+                    android:inputType="textPassword"
                     android:textColor="@color/gray_dark" />
             </com.google.android.material.textfield.TextInputLayout>
 
