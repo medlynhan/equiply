@@ -3,12 +3,15 @@
     <string name="login">Login</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
+    <string name="confirmPassword">Confirm Password</string>
     <string name="register">Register</string>
-    <string name="goToRegister">Belum punya akun ? Register</string>
+    <string name="goToRegister">Belum punya akun?&#160;</string>
+    <string name="goToLogin">Sudah punya akun?&#160;</string>
     <string name="loginNote">Selamat datang kembali</string>
     <string name="MasukAkun">Masuk Akun</string>
     <string name="masukkanEmail">Masukkan Email</string>
     <string name="masukkanPassword">Masukkan Password</string>
+    <string name="masukkanConfirmPassword">Masukkan Password Kembali</string>
     <string name="Daftar"><u>Daftar</u></string>
     <string name="DaftarAkun">Daftar Akun</string>
     <string name="masukkanNama">Masukkan Nama</string>

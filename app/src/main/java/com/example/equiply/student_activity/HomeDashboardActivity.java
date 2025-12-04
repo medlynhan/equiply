@@ -79,5 +79,11 @@ public class HomeDashboardActivity extends AppCompatActivity {
         });
     }
 
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (bottomNavigationView.getSelectedItemId() != R.id.navigation_home){
+            bottomNavigationView.setSelectedItemId(R.id.navigation_home);
+        }
+    }
 }

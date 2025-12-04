@@ -109,6 +109,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/name"
                     android:hint="@string/masukkanNama"
+                    android:inputType="textPersonName"
                     android:textColor="@color/gray_dark" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -134,6 +135,8 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/NIM"
                     android:hint="@string/masukkanNIM"
+                    android:inputType="number"
+                    android:maxLength="10"
                     android:textColor="@color/gray_dark" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -159,6 +162,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/email"
                     android:hint="@string/masukkanEmail"
+                    android:inputType="textEmailAddress"
                     android:textColor="@color/gray_dark" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -177,6 +181,7 @@
                 app:boxCornerRadiusBottomStart="8dp"
                 app:boxCornerRadiusTopEnd="8dp"
                 app:boxCornerRadiusTopStart="8dp"
+                android:layout_marginBottom="8dp"
                 app:boxStrokeColor="@color/gray_light"
                 >
                 <com.google.android.material.textfield.TextInputEditText
@@ -184,6 +189,31 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/password"
                     android:hint="@string/masukkanPassword"
+                    android:inputType="textPassword"
+                    android:textColor="@color/gray_dark" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/confirmPassword"
+                android:textColor="@color/black_modif"
+                android:textSize="16sp"/>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:boxCornerRadiusBottomEnd="8dp"
+                app:boxCornerRadiusBottomStart="8dp"
+                app:boxCornerRadiusTopEnd="8dp"
+                app:boxCornerRadiusTopStart="8dp"
+                app:boxStrokeColor="@color/gray_light"
+                >
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/confirmPassword"
+                    android:hint="@string/masukkanConfirmPassword"
                     android:inputType="textPassword"
                     android:textColor="@color/gray_dark" />
             </com.google.android.material.textfield.TextInputLayout>
@@ -210,7 +240,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Sudah Punya Akun ? "
+                    android:text="@string/goToLogin"
                     android:textSize="14sp" />
 
                 <TextView

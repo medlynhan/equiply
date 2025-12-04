@@ -1,9 +1,11 @@
 package com.example.equiply;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -67,24 +69,59 @@ public class LoginActivity extends AppCompatActivity {
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                setLoadingState(true);
+                hideKeyboard(v);
+
                 String email, password;
 
-                email = String.valueOf(emailET.getText());
+                email = String.valueOf(emailET.getText()).trim();
                 password = String.valueOf(passwordET.getText());
 
                 if (TextUtils.isEmpty(email)){
                     Toast.makeText(LoginActivity.this,"Enter email",Toast.LENGTH_SHORT).show();
+                    setLoadingState(false);
+                    return;
                 }
 
                 if (TextUtils.isEmpty(password)){
                     Toast.makeText(LoginActivity.this, "Enter password",Toast.LENGTH_SHORT).show();
+                    setLoadingState(false);
+                    return;
                 }
 
-                auth.login(LoginActivity.this,email,password);
+                auth.login(LoginActivity.this, email, password, new AuthFirebase.AuthCallback() {
+                    @Override
+                    public void onSuccess() {
+                        // Nothing because of Success
+                    }
+
+                    @Override
+                    public void onFailure(String message) {
+                        setLoadingState(false);
+                        Toast.makeText(LoginActivity.this, message, Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
 
         });
 
+    }
+
+    private void hideKeyboard(View v) {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null) {
+            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+        }
+    }
+
+    private void setLoadingState(boolean isLoading) {
+        if (isLoading) {
+            loginBtn.setEnabled(false);
+            loginBtn.setText("Loading...");
+        } else {
+            loginBtn.setEnabled(true);
+            loginBtn.setText("Login");
+        }
     }
 
 
