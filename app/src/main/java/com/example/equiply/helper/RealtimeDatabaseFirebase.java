@@ -112,6 +112,23 @@ public class RealtimeDatabaseFirebase {
         });
     }
 
+    public void getToolById(String toolId, Consumer<Tool> callback) {
+        mDatabase.child("tools").child(toolId).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        Tool tool = snapshot.getValue(Tool.class);
+                        callback.accept(tool);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        callback.accept(null);
+                    }
+                });
+    }
+
+
+
 
 
 

@@ -67,7 +67,6 @@ public class ToolListActivity extends AppCompatActivity {
     }
 
     private void loadTools() {
-        // TODO: add a progress bar maybe
         database.getAllTools(tools -> {
             if (tools != null && !tools.isEmpty()) {
                 toolAdapter.updateData(tools);
@@ -109,6 +108,7 @@ public class ToolListActivity extends AppCompatActivity {
 
     private void setupBottomNavigation() {
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        bottomNavigationView.setSelectedItemId(R.id.navigation_box);
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
             Intent intent;
@@ -142,13 +142,10 @@ public class ToolListActivity extends AppCompatActivity {
     }
 
     private void openToolDetail(Tool tool) {
-        // TODO: navigate to tool detail activity
-        // Intent intent = new Intent(this, ToolDetailActivity.class);
-        // intent.putExtra("TOOL_ID", tool.getId());
-        // intent.putExtra("TOOL_NAME", tool.getName());
-        // startActivity(intent);
-
-        Toast.makeText(this, "Clicked: " + tool.getName(), Toast.LENGTH_SHORT).show();
+         Intent intent = new Intent(this, ToolDetailActivity.class);
+         intent.putExtra("TOOL_ID", tool.getId());
+         intent.putExtra("TOOL_NAME", tool.getName());
+         startActivity(intent);
     }
 
     @Override
