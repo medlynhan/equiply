@@ -83,6 +83,11 @@ public class AdminToolListActivity extends AppCompatActivity {
                 toolListFull.clear();
                 toolListFull.addAll(tools);
                 toolAdapter.updateData(tools);
+
+                int checkedId = chipGroupFilters.getCheckedChipId();
+                if (checkedId != -1) {
+                    filterTools(checkedId);
+                }
             } else {
                 Toast.makeText(this, "No tools available", Toast.LENGTH_SHORT).show();
             }
@@ -136,12 +141,6 @@ public class AdminToolListActivity extends AppCompatActivity {
         } else if (chipId == R.id.chipBadCondition) {
             for (Tool tool : toolListFull) {
                 if ("Rusak".equalsIgnoreCase(tool.getToolStatus())) {
-                    filteredList.add(tool);
-                }
-            }
-        } else if (chipId == R.id.chipAll) {
-            for (Tool tool : toolListFull) {
-                if ("Tersedia".equalsIgnoreCase(tool.getStatus())) {
                     filteredList.add(tool);
                 }
             }

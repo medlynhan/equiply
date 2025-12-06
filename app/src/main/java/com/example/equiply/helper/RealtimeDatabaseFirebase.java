@@ -31,6 +31,7 @@ public class RealtimeDatabaseFirebase {
 
     public void addNewUser(Context context,String uid, String name, String nim, String email){
         User newUser = new User(uid, name, nim, email);
+        newUser.setRole("student");
         mDatabase.child("users").child(uid).setValue(newUser).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
