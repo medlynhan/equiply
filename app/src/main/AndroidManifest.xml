@@ -15,9 +15,6 @@
             android:name=".admin_activity.EditToolActivity"
             android:exported="false" />
         <activity
-            android:name=".admin_activity.AdminToolListActivity"
-            android:exported="false" />
-        <activity
             android:name=".admin_activity.AdminToolDetailActivity"
             android:exported="false" />
         <activity
@@ -36,7 +33,7 @@
             android:name=".student_activity.NotificationActivity"
             android:exported="false" />
         <activity
-            android:name=".student_activity.ToolListActivity"
+            android:name=".shared_activity.ToolListActivity"
             android:exported="false" />
         <activity
             android:name=".student_activity.HistoryActivity"

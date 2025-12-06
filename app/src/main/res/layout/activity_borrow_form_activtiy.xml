@@ -251,6 +251,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:padding="12dp"
+                            app:buttonTint="#80D4E7"
                             android:text="Saya bertanggung jawab penuh atas barang yang saya pinjam dan siap menerima konsekuensi jika terjadi kerusakan atau kehilangan."
                             android:textColor="@color/black_modif"
                             android:textSize="14sp"/>

@@ -11,7 +11,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.equiply.R;
-import com.example.equiply.student_activity.HistoryActivity;
+import com.example.equiply.shared_activity.ToolListActivity;
 import com.example.equiply.student_activity.ProfileActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
@@ -47,7 +47,7 @@ public class AdminDashboardActivity extends AppCompatActivity {
                 return true;
 
             } else if (itemId == R.id.admin_nav_tools) {
-                intent = new Intent(AdminDashboardActivity.this, AdminToolListActivity.class);
+                intent = new Intent(AdminDashboardActivity.this, ToolListActivity.class);
                 startActivity(intent);
                 return true;
 
