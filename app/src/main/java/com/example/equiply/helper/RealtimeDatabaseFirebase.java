@@ -127,12 +127,42 @@ public class RealtimeDatabaseFirebase {
                 });
     }
 
+    public void deleteTool(String toolId, Consumer<Boolean> callback) {
+        mDatabase.child("tools").child(toolId).removeValue()
+                .addOnCompleteListener(task -> {
+                    callback.accept(task.isSuccessful());
+                });
+    }
 
+    public void updateTool(String toolId, String name, String description,
+                           String status, String condition, String imageUrl,
+                           Consumer<Boolean> callback) {
+        Tool updatedTool = new Tool(toolId, name, description, status, imageUrl, condition);
+        mDatabase.child("tools").child(toolId).setValue(updatedTool)
+                .addOnCompleteListener(task -> {
+                    callback.accept(task.isSuccessful());
+                });
+    }
 
-
-
-
-
-
+    public void updateToolWithNewImage(Context context, String toolId, Uri newImageUri,
+                                       String name, String description,
+                                       String status, String condition,
+                                       Consumer<String> onSuccess,
+                                       Consumer<String> onError) {
+        cloudinaryHelper.uploadImage(newImageUri,
+                imageUrl -> {
+                    updateTool(toolId, name, description, status, condition, imageUrl, success -> {
+                        if (success) {
+                            onSuccess.accept(imageUrl);
+                        } else {
+                            onError.accept("Gagal menyimpan data tool ke database");
+                        }
+                    });
+                },
+                errorMessage -> {
+                    onError.accept(errorMessage);
+                }
+        );
+    }
 
 }

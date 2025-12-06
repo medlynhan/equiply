@@ -12,6 +12,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Equiply">
         <activity
+            android:name=".admin_activity.EditToolActivity"
+            android:exported="false" />
+        <activity
+            android:name=".admin_activity.AdminToolListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".admin_activity.AdminToolDetailActivity"
+            android:exported="false" />
+        <activity
             android:name=".student_activity.BorrowFormActivity"
             android:exported="false" />
         <activity
