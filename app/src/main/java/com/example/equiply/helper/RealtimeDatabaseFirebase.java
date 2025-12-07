@@ -8,8 +8,6 @@ import androidx.annotation.NonNull;
 
 import com.example.equiply.model.Tool;
 import com.example.equiply.model.User;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -32,20 +30,16 @@ public class RealtimeDatabaseFirebase {
     public void addNewUser(Context context,String uid, String name, String nim, String email){
         User newUser = new User(uid, name, nim, email);
         newUser.setRole("student");
-        mDatabase.child("users").child(uid).setValue(newUser).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()) {
-                    Toast.makeText(context, "Account created and User Data Saved", Toast.LENGTH_SHORT).show();
+        mDatabase.child("users").child(uid).setValue(newUser).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Toast.makeText(context, "Account created and User Data Saved", Toast.LENGTH_SHORT).show();
 
-                } else {
-                    Toast.makeText(context, "Failed Saved User Data", Toast.LENGTH_SHORT).show();
-                }
+            } else {
+                Toast.makeText(context, "Failed Saved User Data", Toast.LENGTH_SHORT).show();
             }
         });
 
     }
-
 
     public void getUserByID(String id, Consumer<User> callback){
         mDatabase.child("users").child(id).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -72,14 +66,11 @@ public class RealtimeDatabaseFirebase {
                     Toast.makeText(context, "Gambar berhasil diunggah, menyimpan data...", Toast.LENGTH_SHORT).show();
                     Tool newTool = new Tool(id, name, description, "Tersedia", imageUrl,"Baik");
 
-                    mDatabase.child("tools").child(id).setValue(newTool).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()) {
-                                Toast.makeText(context, "Tool baru berhasil ditambahkan!", Toast.LENGTH_LONG).show();
-                            } else {
-                                Toast.makeText(context, "Gagal menyimpan data tool ke database.", Toast.LENGTH_LONG).show();
-                            }
+                    mDatabase.child("tools").child(id).setValue(newTool).addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(context, "Tool baru berhasil ditambahkan!", Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(context, "Gagal menyimpan data tool ke database.", Toast.LENGTH_LONG).show();
                         }
                     });
                 },

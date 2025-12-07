@@ -10,11 +10,20 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.equiply.admin_activity.AdminDashboardActivity;
+import com.example.equiply.helper.RealtimeDatabaseFirebase;
+import com.example.equiply.helper.SessionManager;
+import com.example.equiply.student_activity.HomeDashboardActivity;
 import com.google.android.material.button.MaterialButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity {
 
     MaterialButton loginBtn, registerBtn;
+    private FirebaseAuth mAuth;
+    private SessionManager session;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,6 +34,9 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        mAuth = FirebaseAuth.getInstance();
+        session = new SessionManager(this);
 
         loginBtn = findViewById(R.id.loginBtn);
         registerBtn = findViewById(R.id.registerBtn);
@@ -45,7 +57,44 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            redirectUser();
+        }
+    }
+
+    private void redirectUser() {
+        String role = session.getRole();
+
+        if (role != null) {
+            Intent intent;
+            if ("admin".equalsIgnoreCase(role)) {
+                intent = new Intent(MainActivity.this, AdminDashboardActivity.class);
+            } else {
+                intent = new Intent(MainActivity.this, HomeDashboardActivity.class);
+            }
+
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
+        } else {
+            String uid = mAuth.getCurrentUser().getUid();
+            new RealtimeDatabaseFirebase(this).getUserByID(uid, user -> {
+                if (user != null) {
+                    session.saveUserSession(user.getId(),
+                            user.getRole(),
+                            user.getName(),
+                            user.getEmail());
+                    redirectUser();
+                }
+            });
+        }
 
     }
 }

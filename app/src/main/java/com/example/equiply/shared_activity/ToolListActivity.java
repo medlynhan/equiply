@@ -14,13 +14,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.equiply.LoginActivity;
 import com.example.equiply.R;
 import com.example.equiply.adapter.ToolAdapter;
 import com.example.equiply.admin_activity.AddToolActivity;
 import com.example.equiply.admin_activity.AdminDashboardActivity;
 import com.example.equiply.admin_activity.AdminToolDetailActivity;
 import com.example.equiply.helper.RealtimeDatabaseFirebase;
+import com.example.equiply.helper.SessionManager;
 import com.example.equiply.model.Tool;
 import com.example.equiply.student_activity.HistoryActivity;
 import com.example.equiply.student_activity.HomeDashboardActivity;
@@ -31,13 +31,10 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 
 public class ToolListActivity extends AppCompatActivity {
-
     private RecyclerView rvTools;
     private ToolAdapter toolAdapter;
     private RealtimeDatabaseFirebase database;
@@ -51,7 +48,6 @@ public class ToolListActivity extends AppCompatActivity {
     private ArrayList<Tool> toolListFull;
 
     private boolean isAdmin = false;
-    private boolean isRoleReloaded = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,24 +56,29 @@ public class ToolListActivity extends AppCompatActivity {
 
         initializeViews();
         database = new RealtimeDatabaseFirebase(this);
+        SessionManager session = new SessionManager(this);
+
+        isAdmin = session.isAdmin();
+
+        if (isAdmin) {
+            setupAdminUI();
+        } else {
+            setupStudentUI();
+        }
 
         setupRecyclerView();
         setupSearch();
         setupFilters();
         setupFabQrCode();
-
-        checkUserRoleAndSetupUI();
+        loadTools();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        if (isRoleReloaded) {
-            loadTools();
-            updateBottomNavigationSelection();
-        }
-
+        loadTools();
+        updateBottomNavigationSelection();
     }
 
     private void initializeViews() {
@@ -89,30 +90,6 @@ public class ToolListActivity extends AppCompatActivity {
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
 
         chipGroupFilters.setVisibility(View.GONE);
-    }
-
-    private void checkUserRoleAndSetupUI() {
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-
-        if (currentUser == null) {
-            startActivity(new Intent(this, LoginActivity.class));
-            finish();
-            return;
-        }
-
-        database.getUserByID(currentUser.getUid(), user -> {
-            isRoleReloaded = true;
-
-            if (user != null && "admin".equals(user.getRole())) {
-                isAdmin = true;
-                setupAdminUI();
-            } else {
-                isAdmin = false;
-                setupStudentUI();
-            }
-
-            loadTools();
-        });
     }
 
     private void setupStudentUI() {
@@ -188,7 +165,7 @@ public class ToolListActivity extends AppCompatActivity {
     private void updateBottomNavigationSelection() {
         if (bottomNavigationView != null) {
             Menu menu = bottomNavigationView.getMenu();
-            MenuItem item = null;
+            MenuItem item;
 
             if (isAdmin) {
                 item = menu.findItem(R.id.admin_nav_tools);

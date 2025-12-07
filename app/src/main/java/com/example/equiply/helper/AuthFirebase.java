@@ -55,6 +55,12 @@ public class AuthFirebase {
                             if (userModel != null) {
                                 callback.onSuccess();
 
+                                SessionManager sessionManager = new SessionManager(context);
+                                sessionManager.saveUserSession(userModel.getId(),
+                                        userModel.getRole(),
+                                        userModel.getName(),
+                                        userModel.getEmail());
+
                                 Toast.makeText(context, "Login Success.",
                                         Toast.LENGTH_SHORT).show();
 
@@ -98,6 +104,9 @@ public class AuthFirebase {
     }
 
     public void logout(Context context){
+        SessionManager sessionManager = new SessionManager(context);
+        sessionManager.logout();
+
         mAuth.signOut();
         Intent intent = new Intent(context, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |  Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -107,9 +116,5 @@ public class AuthFirebase {
     public FirebaseUser getTheCurrentUser(){
         return mAuth.getCurrentUser();
     }
-
-
-
-
 
 }
