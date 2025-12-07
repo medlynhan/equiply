@@ -13,12 +13,13 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.equiply.R;
 import com.example.equiply.helper.AuthFirebase;
 import com.example.equiply.helper.RealtimeDatabaseFirebase;
+import com.example.equiply.helper.SessionManager;
+import com.example.equiply.shared_activity.ToolListActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseUser;
 
 public class HomeDashboardActivity extends AppCompatActivity {
-    private AuthFirebase auth;
-    private RealtimeDatabaseFirebase db;
+    private SessionManager session;
     private BottomNavigationView bottomNavigationView;
 
     private TextView userName;
@@ -34,17 +35,11 @@ public class HomeDashboardActivity extends AppCompatActivity {
             return insets;
         });
 
-        db = new RealtimeDatabaseFirebase(this);
-        auth = new AuthFirebase(this);
+        session = new SessionManager(this);
 
         userName = findViewById(R.id.userName);
 
-        FirebaseUser firebaseUser = auth.getTheCurrentUser();
-        db.getUserByID(firebaseUser.getUid(),user -> {
-            if (user !=null){
-                userName.setText(user.getName());
-            }
-        });
+        userName.setText(session.getName());
 
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnItemSelectedListener(item -> {

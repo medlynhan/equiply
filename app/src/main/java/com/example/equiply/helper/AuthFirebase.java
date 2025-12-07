@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.widget.Toast;
 
 import com.example.equiply.admin_activity.AdminDashboardActivity;
+import com.example.equiply.model.User;
 import com.example.equiply.student_activity.HomeDashboardActivity;
 import com.example.equiply.LoginActivity;
 import com.example.equiply.MainActivity;
@@ -49,20 +50,36 @@ public class AuthFirebase {
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        callback.onSuccess();
+                        FirebaseUser firebaseUser = getTheCurrentUser();
+                        db.getUserByID(firebaseUser.getUid(),userModel -> {
+                            if (userModel != null) {
+                                callback.onSuccess();
 
-                        Toast.makeText(context, "Login Success.",
-                                Toast.LENGTH_SHORT).show();
+                                SessionManager sessionManager = new SessionManager(context);
+                                sessionManager.saveUserSession(userModel.getId(),
+                                        userModel.getRole(),
+                                        userModel.getName(),
+                                        userModel.getEmail());
 
-                        if (email.equals("admin@gmail.com")) {
-                            Intent intent = new Intent(context, AdminDashboardActivity.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |  Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            context.startActivity(intent);
-                        } else {
-                            Intent intent = new Intent(context, HomeDashboardActivity.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |  Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            context.startActivity(intent);
-                        }
+                                Toast.makeText(context, "Login Success.",
+                                        Toast.LENGTH_SHORT).show();
+
+                                Intent intent;
+
+                                if (userModel.getRole().equals("admin")) {
+                                    intent = new Intent(context, AdminDashboardActivity.class);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |  Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    context.startActivity(intent);
+                                } else {
+                                    intent = new Intent(context, HomeDashboardActivity.class);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |  Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    context.startActivity(intent);
+                                }
+                            } else {
+                                callback.onFailure("User data not found in database.");
+                                mAuth.signOut();
+                            }
+                        });
                     } else {
                         String errorMessage = "Login failed.";
 
@@ -87,6 +104,9 @@ public class AuthFirebase {
     }
 
     public void logout(Context context){
+        SessionManager sessionManager = new SessionManager(context);
+        sessionManager.logout();
+
         mAuth.signOut();
         Intent intent = new Intent(context, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |  Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -96,9 +116,5 @@ public class AuthFirebase {
     public FirebaseUser getTheCurrentUser(){
         return mAuth.getCurrentUser();
     }
-
-
-
-
 
 }

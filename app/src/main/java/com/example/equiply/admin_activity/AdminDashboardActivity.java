@@ -11,11 +11,15 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.equiply.R;
+import com.example.equiply.shared_activity.ToolListActivity;
+import com.example.equiply.student_activity.ProfileActivity;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
 
 public class AdminDashboardActivity extends AppCompatActivity {
 
     private MaterialButton goToAddToolPage;
+    private BottomNavigationView adminNavView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,6 +38,40 @@ public class AdminDashboardActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        adminNavView = findViewById(R.id.adminNavView);
+        adminNavView.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            Intent intent;
+            if(itemId == R.id.admin_nav_home){
+                return true;
+
+            } else if (itemId == R.id.admin_nav_tools) {
+                intent = new Intent(AdminDashboardActivity.this, ToolListActivity.class);
+                startActivity(intent);
+                return true;
+
+            } else if (itemId == R.id.admin_nav_addTools) {
+                intent = new Intent(AdminDashboardActivity.this, AddToolActivity.class);
+                startActivity(intent);
+                return true;
+
+            } else if (itemId == R.id.admin_nav_report) {
+                // TODO: add new class for report page
+//                intent = new Intent(AdminDashboardActivity.this, AdminReportActivity.class);
+//                startActivity(intent);
+                return true;
+
+            } else if (itemId == R.id.admin_nav_profil) {
+                intent = new Intent(AdminDashboardActivity.this, ProfileActivity.class);
+                startActivity(intent);
+                return true;
+            }
+
+            return false;
+
+        });
+
     }
 
 

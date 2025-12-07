@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/admin_nav_home"
+        android:title="Beranda"
+        android:icon="@drawable/home_icon"/>
+
+    <!--    TODO: add icon-->
+    <item
+        android:id="@+id/admin_nav_tools"
+        android:title="Alat"
+        android:icon="@drawable/box_icon"/>
+
+    <!--    TODO: add icon-->
+    <item
+        android:id="@+id/admin_nav_addTools"
+        android:title="Barang"
+        android:icon="@drawable/ic_img_placeholder" />
+
+    <!--    TODO: add icon-->
+    <item
+        android:id="@+id/admin_nav_report"
+        android:title="Laporan"
+        android:icon="@drawable/ic_img_placeholder" />
+
+    <item
+        android:id="@+id/admin_nav_profil"
+        android:title="Profil"
+        android:icon="@drawable/profile_icon"/>
+
+</menu>
