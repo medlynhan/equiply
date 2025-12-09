@@ -6,6 +6,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.example.equiply.model.History;
 import com.example.equiply.model.Tool;
 import com.example.equiply.model.User;
 import com.google.firebase.database.DataSnapshot;
@@ -15,6 +16,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.function.Consumer;
 
 public class RealtimeDatabaseFirebase {
@@ -157,4 +160,60 @@ public class RealtimeDatabaseFirebase {
         );
     }
 
+    public void getHistoryByUserId(String userId, Consumer<ArrayList<History>> callback) {
+        mDatabase.child("history")
+                .orderByChild("userId")
+                .equalTo(userId)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        ArrayList<History> historyList = new ArrayList<>();
+                        if (dataSnapshot.exists()) {
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                History history = snapshot.getValue(History.class);
+                                if (history != null) {
+                                    historyList.add(history);
+                                }
+                            }
+                            Collections.reverse(historyList);
+                        }
+                        callback.accept(historyList);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        callback.accept(new ArrayList<>());
+                    }
+                });
+    }
+
+    public void getAllHistories(Consumer<ArrayList<History>> callback) {
+        mDatabase.child("history").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                ArrayList<History> historyList = new ArrayList<>();
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        History history = snapshot.getValue(History.class);
+                        if (history != null) {
+                            historyList.add(history);
+                        }
+                    }
+                    Collections.reverse(historyList);
+                }
+                callback.accept(historyList);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                callback.accept(new ArrayList<>());
+            }
+        });
+    }
+
+    public void addHistory(History history, Consumer<Boolean> callback) {
+        mDatabase.child("history").push().setValue(history).addOnCompleteListener(task -> {
+            callback.accept(task.isSuccessful());
+        });
+    }
 }

@@ -9,17 +9,12 @@ import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.equiply.R;
 import com.example.equiply.adapter.HistoryAdapter;
-import com.example.equiply.adapter.ToolAdapter;
 import com.example.equiply.helper.RealtimeDatabaseFirebase;
 import com.example.equiply.helper.SessionManager;
 import com.example.equiply.model.History;
@@ -40,8 +35,8 @@ public class HistoryActivity extends AppCompatActivity {
     private Chip chipAll;
     private BottomNavigationView bottomNavigationView;
 
-    private ArrayList<History> histories;
-    private ArrayList<History> historiesFull;
+    private ArrayList<History> historyList;
+    private ArrayList<History> historyListFull;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,14 +53,13 @@ public class HistoryActivity extends AppCompatActivity {
         setupRecyclerView();
         setupSearch();
         setupFilters();
-//        loadHistories();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-//        loadHistories();
+        loadHistories();
         updateBottomNavigationSelection();
     }
 
@@ -128,37 +122,40 @@ public class HistoryActivity extends AppCompatActivity {
     }
 
     private void setupRecyclerView() {
-        histories = new ArrayList<>();
-        historiesFull = new ArrayList<>();
+        historyList = new ArrayList<>();
+        historyListFull = new ArrayList<>();
 
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 1);
         rvHistory.setLayoutManager(gridLayoutManager);
 
-        historyAdapter = new HistoryAdapter(this, histories);
+        historyAdapter = new HistoryAdapter(this, historyList);
         rvHistory.setAdapter(historyAdapter);
     }
 
-    // TODO link to databse (idk if this is correct or no)
-//    private void loadHistories() {
-//        database.getAllHistories(histories -> {
-//            if (histories != null && !histories.isEmpty()) {
-//                histories.clear();
-//                historiesFull.clear();
-//
-//                histories.addAll(histories);
-//                historiesFull.addAll(histories);
-//
-//                historyAdapter.updateData(histories);
-//                int checkedId = chipGroupFilters.getCheckedChipId();
-//                if (checkedId != -1) {
-//                    filterHistories(checkedId);
-//                }
-//
-//            } else {
-//                Toast.makeText(this, "No histories available", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//    }
+    private void loadHistories() {
+        // get current userid
+        SessionManager session = new SessionManager(this);
+        String userId = session.getUserId();
+
+        if (userId == null || userId.isEmpty()) {
+            Toast.makeText(this, "User ID not found", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        database.getHistoryByUserId(userId, histories -> {
+            if (histories != null && !histories.isEmpty()) {
+                historyList.clear();
+                historyListFull.clear();
+
+                historyList.addAll(histories);
+                historyListFull.addAll(histories);
+
+                applyFilters();
+            } else {
+                Toast.makeText(this, "No history available", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
     private void setupSearch() {
         etSearch.addTextChangedListener(new TextWatcher() {
@@ -166,14 +163,12 @@ public class HistoryActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {}
 
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                if (historyAdapter != null) {
-                    historyAdapter.filter(s.toString());
-                }
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                applyFilters();
+            }
         });
     }
 
@@ -181,25 +176,48 @@ public class HistoryActivity extends AppCompatActivity {
         chipGroupFilters.setOnCheckedStateChangeListener((group, checkedIds) -> {
             if (checkedIds.isEmpty()) {
                 chipAll.setChecked(true);
-                return;
             }
-            filterHistory(checkedIds.get(0));
+            applyFilters();
         });
+    }
+
+    private void applyFilters() {
+        String searchText = etSearch.getText().toString().toLowerCase().trim();
+        int checkedChipId = chipGroupFilters.getCheckedChipId();
+
+        ArrayList<History> filteredList = new ArrayList<>();
+
+        for (History history : historyListFull) {
+            boolean matchesSearch = history.getToolName().toLowerCase().contains(searchText);
+
+            boolean matchesCategory = true;
+            if (checkedChipId == R.id.chipActive) {
+                matchesCategory = "Dipinjam".equalsIgnoreCase(history.getStatus());
+            } else if (checkedChipId == R.id.chipReturned) {
+                matchesCategory = "Dikembalikan".equalsIgnoreCase(history.getStatus());
+            }
+            // if chipAll is selected, matchesCategory remains true
+
+            if (matchesSearch && matchesCategory) {
+                filteredList.add(history);
+            }
+        }
+        historyAdapter.updateData(filteredList);
     }
 
     private void filterHistory(int chipID) {
         ArrayList<History> filteredList = new ArrayList<>();
         
         if (chipID == R.id.chipAll) {
-            filteredList.addAll(historiesFull);
+            filteredList.addAll(historyListFull);
         } else if (chipID == R.id.chipActive) {
-            for (History history : historiesFull) {
+            for (History history : historyListFull) {
                 if ("Dipinjam".equalsIgnoreCase(history.getStatus())) {
                     filteredList.add(history);
                 }
             }
         } else if (chipID == R.id.chipReturned) {
-            for (History history : historiesFull) {
+            for (History history : historyListFull) {
                 if ("Dikembalikan".equalsIgnoreCase(history.getStatus())) {
                     filteredList.add(history);
                 }

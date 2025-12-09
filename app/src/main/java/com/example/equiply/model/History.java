@@ -12,8 +12,10 @@ public class History {
     private String finalToolStatus;//keadaan barang terakhir, baik / rusak
     private String imageUrl;
 
-    public History(){}
-    public History(String id, String userId, String toolId, String borrowDate, String returnDate, String initialToolStatus) {
+    public History() {}
+    public History(String id, String userId, String toolId, String toolName,
+                   String status, String imageUrl, String borrowDate,
+                   String returnDate, String initialToolStatus, String finalToolStatus) {
         this.id = id;
         this.userId = userId;
         this.toolId = toolId;
@@ -23,6 +25,7 @@ public class History {
         this.borrowDate = borrowDate;
         this.returnDate = returnDate;
         this.initialToolStatus = initialToolStatus;
+        this.finalToolStatus = finalToolStatus;
     }
 
     public String getId() {
