@@ -12,6 +12,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Equiply">
         <activity
+            android:name=".helper.QRCodeScanner"
+            android:screenOrientation="fullSensor"
+            android:stateNotNeeded="true"
+            android:theme="@style/Theme.AppCompat.NoActionBar"
+            tools:replace="android:screenOrientation"/>
+        <activity
             android:name=".admin_activity.EditToolActivity"
             android:exported="false" />
         <activity

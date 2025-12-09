@@ -4,12 +4,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,6 +21,7 @@ import com.example.equiply.adapter.ToolAdapter;
 import com.example.equiply.admin_activity.AddToolActivity;
 import com.example.equiply.admin_activity.AdminDashboardActivity;
 import com.example.equiply.admin_activity.AdminToolDetailActivity;
+import com.example.equiply.helper.QRCodeScanner;
 import com.example.equiply.helper.RealtimeDatabaseFirebase;
 import com.example.equiply.helper.SessionManager;
 import com.example.equiply.model.Tool;
@@ -31,6 +34,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 import java.util.ArrayList;
 
@@ -271,10 +276,45 @@ public class ToolListActivity extends AppCompatActivity {
 
     private void setupFabQrCode() {
         fabQrCode.setOnClickListener(v -> {
-            // Intent intent = new Intent(this, QRCodeScannerActivity.class);
-            // startActivity(intent);
-            Toast.makeText(this, "QR Code Scanner - Coming Soon!", Toast.LENGTH_SHORT).show();
+            IntentIntegrator intentIntegrator = new IntentIntegrator(this);
+
+            intentIntegrator.setCaptureActivity(QRCodeScanner.class);
+            intentIntegrator.setPrompt("Scan a tool QR Code");
+            intentIntegrator.setOrientationLocked(false);
+            intentIntegrator.setBeepEnabled(false);
+            intentIntegrator.initiateScan();
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        IntentResult intentResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+
+        if (intentResult != null) {
+            if (intentResult.getContents() == null) {
+                Toast.makeText(getBaseContext(), "Cancelled", Toast.LENGTH_SHORT).show();
+            } else {
+                String toolId = intentResult.getContents();
+
+                if (toolId.contains(".") || toolId.contains("#") || toolId.contains("$") ||
+                        toolId.contains("[") || toolId.contains("]") || toolId.contains("/")) {
+                    Toast.makeText(getBaseContext(), "Invalid QR Code format.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                database.getToolById(toolId, tool -> {
+                    if (tool != null) {
+                        openToolDetail(tool);
+                    } else {
+                        Toast.makeText(getBaseContext(), "QR is not Valid", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     private void openToolDetail(Tool tool) {
