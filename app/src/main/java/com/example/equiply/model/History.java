@@ -5,17 +5,17 @@ public class History {
     private String userId;
     private String toolId;
     private String toolName;
-    private String status;
+    private String status; // Dipinjam / Dikembalikan
     private String borrowDate;
     private String returnDate;
-    private String initialToolStatus;//keadaan barang awal", baik / rusak
-    private String finalToolStatus;//keadaan barang terakhir, baik / rusak
+    private String initialCondition; // keadaan barang awal", baik / rusak
+    private String finalCondition; // keadaan barang terakhir, baik / rusak
     private String imageUrl;
 
     public History() {}
     public History(String id, String userId, String toolId, String toolName,
                    String status, String imageUrl, String borrowDate,
-                   String returnDate, String initialToolStatus, String finalToolStatus) {
+                   String returnDate, String initialCondition, String finalToolStatus) {
         this.id = id;
         this.userId = userId;
         this.toolId = toolId;
@@ -24,8 +24,8 @@ public class History {
         this.imageUrl = imageUrl;
         this.borrowDate = borrowDate;
         this.returnDate = returnDate;
-        this.initialToolStatus = initialToolStatus;
-        this.finalToolStatus = finalToolStatus;
+        this.initialCondition = initialCondition;
+        this.finalCondition = finalToolStatus;
     }
 
     public String getId() {
@@ -92,19 +92,19 @@ public class History {
         this.imageUrl = imageUrl;
     }
 
-    public String getInitialToolStatus() {
-        return initialToolStatus;
+    public String getInitialCondition() {
+        return initialCondition;
     }
 
-    public void setInitialToolStatus(String initialToolStatus) {
-        this.initialToolStatus = initialToolStatus;
+    public void setInitialCondition(String initialCondition) {
+        this.initialCondition = initialCondition;
     }
 
-    public String getFinalToolStatus() {
-        return finalToolStatus;
+    public String getFinalCondition() {
+        return finalCondition;
     }
 
-    public void setFinalToolStatus(String finalToolStatus) {
-        this.finalToolStatus = finalToolStatus;
+    public void setFinalCondition(String finalCondition) {
+        this.finalCondition = finalCondition;
     }
 }
