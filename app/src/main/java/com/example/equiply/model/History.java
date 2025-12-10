@@ -5,21 +5,23 @@ public class History {
     private String userId;
     private String toolId;
     private String toolName;
-    private String status; // Dipinjam / Dikembalikan
+    private String reason;
+    private String status; // Dipinjam / Menunggu Konfirmasi / Dikembalikan
     private String borrowDate;
     private String returnDate;
-    private String initialCondition; // keadaan barang awal", baik / rusak
-    private String finalCondition; // keadaan barang terakhir, baik / rusak
+    private String initialCondition; // keadaan barang awal", Baik / Rusak
+    private String finalCondition; // keadaan barang terakhir, Baik / Rusak
     private String imageUrl;
 
     public History() {}
-    public History(String id, String userId, String toolId, String toolName,
+    public History(String id, String userId, String toolId, String toolName, String reason,
                    String status, String imageUrl, String borrowDate,
                    String returnDate, String initialCondition, String finalToolStatus) {
         this.id = id;
         this.userId = userId;
         this.toolId = toolId;
         this.toolName = toolName;
+        this.reason = reason;
         this.status = status;
         this.imageUrl = imageUrl;
         this.borrowDate = borrowDate;
@@ -58,6 +60,14 @@ public class History {
 
     public void setToolName(String toolName) {
         this.toolName = toolName;
+    }
+
+    public String getReason() {
+        return reason;
+    }
+
+    public void setReason(String reason) {
+        this.reason = reason;
     }
 
     public String getStatus() {

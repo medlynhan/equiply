@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="28dp"
+    android:background="#F5F7FA"
+    tools:context=".student_activity.HistoryDetailActivity">
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabBack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:src="@drawable/ic_back"
+        app:fabSize="auto"
+        app:backgroundTint="@android:color/white"
+        app:elevation="4dp" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="56dp"
+            android:paddingBottom="100dp">
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/imageCard"
+                android:layout_width="0dp"
+                android:layout_height="380dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="20dp"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="6dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/ivToolImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="Tool image"
+                    android:scaleType="centerCrop"
+                    tools:src="@drawable/ic_img_placeholder" />
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:id="@+id/tvToolName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="24dp"
+                tools:text="Camera Canon EOS"
+                android:text="Camera"
+                android:textColor="@color/black_modif"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/imageCard" />
+
+            <LinearLayout
+                android:id="@+id/statusContainer"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="24dp"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvToolName">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/statusBadge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="12dp"
+                    app:cardBackgroundColor="#FF9800"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="0dp">
+
+                    <TextView
+                        android:id="@+id/tvStatus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="16dp"
+                        android:paddingTop="6dp"
+                        android:paddingEnd="16dp"
+                        android:paddingBottom="6dp"
+                        tools:text="Sedang Dipinjam"
+                        android:text="Status"
+                        android:textColor="@android:color/white"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                </com.google.android.material.card.MaterialCardView>
+
+            </LinearLayout>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/detailCard"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="16dp"
+                app:cardBackgroundColor="@android:color/white"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/statusContainer">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="24dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Detail Peminjaman"
+                        android:textColor="@color/black_modif"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="16dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tanggal Pinjam"
+                        android:textColor="#999999"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/tvBorrowDate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="16dp"
+                        tools:text="12 Oktober 2023"
+                        android:textColor="@color/black_modif"
+                        android:textSize="16sp"
+                        android:textStyle="bold"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tenggat Kembali / Dikembalikan"
+                        android:textColor="#999999"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/tvReturnDate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="16dp"
+                        tools:text="19 Oktober 2023"
+                        android:textColor="@color/black_modif"
+                        android:textSize="16sp"
+                        android:textStyle="bold"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Alasan Peminjaman"
+                        android:textColor="#999999"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/tvReason"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        tools:text="Untuk keperluan tugas akhir fotografi."
+                        android:textColor="@color/black_modif"
+                        android:textSize="16sp" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/actionButtonCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        app:cardBackgroundColor="@android:color/white"
+        app:cardCornerRadius="0dp"
+        app:cardElevation="16dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnAction"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_margin="16dp"
+            android:text="Kembalikan Alat"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:backgroundTint="#80D4E7"
+            app:cornerRadius="12dp"
+            app:iconSize="24dp"
+            app:iconGravity="textStart"
+            app:iconPadding="12dp" />
+
+    </com.google.android.material.card.MaterialCardView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

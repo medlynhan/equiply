@@ -46,7 +46,6 @@ public class HistoryActivity extends AppCompatActivity {
         initializeViews();
 
         database = new RealtimeDatabaseFirebase(this);
-        SessionManager session = new SessionManager(this);
 
         setupBottomNavigation();
 

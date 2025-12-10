@@ -1,5 +1,6 @@
 package com.example.equiply.adapter;
 
+import android.content.Intent;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.equiply.R;
 import com.example.equiply.model.History;
+import com.example.equiply.student_activity.HistoryDetailActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,17 +26,11 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
     private Context context;
     private List<History> historyList;
     private List<History> historyListFull;
-//    private OnHistoryClickListener listener;
-//
-//    public interface OnHistoryClickListener {
-//        void onHistoryClick(History history);
-//    }
 
     public HistoryAdapter(Context context, List<History> historyList) {
         this.context = context;
         this.historyList = historyList;
         this.historyListFull = new ArrayList<>(historyList);
-//        this.listener = listener;
     }
 
     @NonNull
@@ -49,13 +45,27 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
         History history = historyList.get(position);
 
         holder.tvItemTitle.setText(history.getToolName());
-        holder.tvItemStatus.setText(history.getStatus());
+
+        String status = history.getStatus();
 
         if (history.getStatus().equals("Dipinjam")) {
-            holder.tvDate.setText("Sedang dipinjam");
-            holder.tvDate.setTextColor(ContextCompat.getColor(context, R.color.red));
+            holder.tvItemStatus.setText("Sedang Dipinjam");
+            holder.tvItemStatus.setTextColor(ContextCompat.getColor(context, R.color.black_modif));
+
+            holder.tvDate.setText(" - ");
+//            holder.tvDate.setTextColor(ContextCompat.getColor(context, R.color.red));
+        } else if (history.getStatus().equals("Menunggu Konfirmasi")) {
+            holder.tvItemStatus.setText("Menunggu Konfirmasi");
+            holder.tvItemStatus.setTextColor(ContextCompat.getColor(context, R.color.black_modif));
+
+            holder.tvDate.setText(" - ");
+//            holder.tvDate.setTextColor(ContextCompat.getColor(context, R.color.yellow));
         } else if (history.getStatus().equals("Dikembalikan")) {
+            holder.tvItemStatus.setText("Telah Dikembalikan");
+            holder.tvItemStatus.setTextColor(ContextCompat.getColor(context, R.color.black_modif));
+
             holder.tvDate.setText(history.getReturnDate());
+            holder.tvDate.setTextColor(ContextCompat.getColor(context, R.color.black_modif));
         }
 
         Glide.with(context)
@@ -64,6 +74,21 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
                 .error(R.drawable.ic_img_placeholder)
                 .centerInside()
                 .into(holder.ivToolImage);
+
+        holder.cardView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, HistoryDetailActivity.class);
+            // Pass all data needed for the detail screen
+            intent.putExtra("TOOL_ID", history.getToolId());
+            intent.putExtra("TOOL_NAME", history.getToolName());
+            intent.putExtra("TOOL_IMAGE", history.getImageUrl());
+            intent.putExtra("USER_ID", history.getUserId());
+            intent.putExtra("STATUS", history.getStatus());
+            intent.putExtra("BORROW_DATE", history.getBorrowDate());
+            intent.putExtra("RETURN_DATE", history.getReturnDate());
+            intent.putExtra("REASON", history.getReason());
+
+            context.startActivity(intent);
+        });
     }
 
     @Override
