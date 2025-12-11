@@ -145,7 +145,7 @@ public class ToolListActivity extends AppCompatActivity {
                 return true;
             } else if (itemId == R.id.admin_nav_tools) {
                 return true;
-            } else if (itemId == R.id.admin_nav_addTools) {
+            } else if (itemId == R.id.admin_add_item) {
                 intent = new Intent(this, AddToolActivity.class);
                 startActivity(intent);
                 return true;
