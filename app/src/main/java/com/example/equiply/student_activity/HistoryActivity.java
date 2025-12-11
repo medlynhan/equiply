@@ -15,11 +15,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.equiply.R;
 import com.example.equiply.adapter.HistoryAdapter;
-import com.example.equiply.helper.RealtimeDatabaseFirebase;
+import com.example.equiply.helper.BorrowHistoryDA;
 import com.example.equiply.helper.SessionManager;
-import com.example.equiply.model.History;
+import com.example.equiply.model.BorrowHistory;
 import com.example.equiply.shared_activity.ToolListActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 
@@ -29,14 +30,15 @@ import java.util.ArrayList;
 public class HistoryActivity extends AppCompatActivity {
     private RecyclerView rvHistory;
     private HistoryAdapter historyAdapter;
-    private RealtimeDatabaseFirebase database;
+    private BorrowHistoryDA borrowHistoryDA;
     private EditText etSearch;
     private ChipGroup chipGroupFilters;
     private Chip chipAll;
+    private MaterialCardView statusBadge;
     private BottomNavigationView bottomNavigationView;
 
-    private ArrayList<History> historyList;
-    private ArrayList<History> historyListFull;
+    private ArrayList<BorrowHistory> borrowHistoryList;
+    private ArrayList<BorrowHistory> borrowHistoryListFull;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +47,7 @@ public class HistoryActivity extends AppCompatActivity {
 
         initializeViews();
 
-        database = new RealtimeDatabaseFirebase(this);
+        borrowHistoryDA = new BorrowHistoryDA();
 
         setupBottomNavigation();
 
@@ -68,6 +70,7 @@ public class HistoryActivity extends AppCompatActivity {
         etSearch = findViewById(R.id.etSearch);
         chipGroupFilters = findViewById(R.id.chipGroupFilters);
         chipAll = findViewById(R.id.chipAll);
+        statusBadge = findViewById(R.id.statusBadge);
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
     }
 
@@ -121,13 +124,13 @@ public class HistoryActivity extends AppCompatActivity {
     }
 
     private void setupRecyclerView() {
-        historyList = new ArrayList<>();
-        historyListFull = new ArrayList<>();
+        borrowHistoryList = new ArrayList<>();
+        borrowHistoryListFull = new ArrayList<>();
 
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 1);
         rvHistory.setLayoutManager(gridLayoutManager);
 
-        historyAdapter = new HistoryAdapter(this, historyList);
+        historyAdapter = new HistoryAdapter(this, borrowHistoryList);
         rvHistory.setAdapter(historyAdapter);
     }
 
@@ -141,13 +144,13 @@ public class HistoryActivity extends AppCompatActivity {
             return;
         }
 
-        database.getHistoryByUserId(userId, histories -> {
+        borrowHistoryDA.getHistoryByUserId(userId, histories -> {
             if (histories != null && !histories.isEmpty()) {
-                historyList.clear();
-                historyListFull.clear();
+                borrowHistoryList.clear();
+                borrowHistoryListFull.clear();
 
-                historyList.addAll(histories);
-                historyListFull.addAll(histories);
+                borrowHistoryList.addAll(histories);
+                borrowHistoryListFull.addAll(histories);
 
                 applyFilters();
             } else {
@@ -184,41 +187,41 @@ public class HistoryActivity extends AppCompatActivity {
         String searchText = etSearch.getText().toString().toLowerCase().trim();
         int checkedChipId = chipGroupFilters.getCheckedChipId();
 
-        ArrayList<History> filteredList = new ArrayList<>();
+        ArrayList<BorrowHistory> filteredList = new ArrayList<>();
 
-        for (History history : historyListFull) {
-            boolean matchesSearch = history.getToolName().toLowerCase().contains(searchText);
+        for (BorrowHistory borrowHistory : borrowHistoryListFull) {
+            boolean matchesSearch = borrowHistory.getToolName().toLowerCase().contains(searchText);
 
             boolean matchesCategory = true;
             if (checkedChipId == R.id.chipActive) {
-                matchesCategory = "Dipinjam".equalsIgnoreCase(history.getStatus());
+                matchesCategory = "Approved".equalsIgnoreCase(borrowHistory.getStatus());
             } else if (checkedChipId == R.id.chipReturned) {
-                matchesCategory = "Dikembalikan".equalsIgnoreCase(history.getStatus());
+                matchesCategory = "Returned".equalsIgnoreCase(borrowHistory.getStatus());
             }
             // if chipAll is selected, matchesCategory remains true
 
             if (matchesSearch && matchesCategory) {
-                filteredList.add(history);
+                filteredList.add(borrowHistory);
             }
         }
         historyAdapter.updateData(filteredList);
     }
 
     private void filterHistory(int chipID) {
-        ArrayList<History> filteredList = new ArrayList<>();
+        ArrayList<BorrowHistory> filteredList = new ArrayList<>();
         
         if (chipID == R.id.chipAll) {
-            filteredList.addAll(historyListFull);
+            filteredList.addAll(borrowHistoryListFull);
         } else if (chipID == R.id.chipActive) {
-            for (History history : historyListFull) {
-                if ("Dipinjam".equalsIgnoreCase(history.getStatus())) {
-                    filteredList.add(history);
+            for (BorrowHistory borrowHistory : borrowHistoryListFull) {
+                if ("Dipinjam".equalsIgnoreCase(borrowHistory.getStatus())) {
+                    filteredList.add(borrowHistory);
                 }
             }
         } else if (chipID == R.id.chipReturned) {
-            for (History history : historyListFull) {
-                if ("Dikembalikan".equalsIgnoreCase(history.getStatus())) {
-                    filteredList.add(history);
+            for (BorrowHistory borrowHistory : borrowHistoryListFull) {
+                if ("Dikembalikan".equalsIgnoreCase(borrowHistory.getStatus())) {
+                    filteredList.add(borrowHistory);
                 }
             }
         }

@@ -1,33 +1,35 @@
 package com.example.equiply.model;
 
-public class History {
+public class BorrowHistory {
     private String id;
     private String userId;
     private String toolId;
     private String toolName;
     private String reason;
     private String status; // Dipinjam / Menunggu Konfirmasi / Dikembalikan
+    private String requestDate;
     private String borrowDate;
     private String returnDate;
     private String initialCondition; // keadaan barang awal", Baik / Rusak
     private String finalCondition; // keadaan barang terakhir, Baik / Rusak
     private String imageUrl;
+    private long createdAt;
 
-    public History() {}
-    public History(String id, String userId, String toolId, String toolName, String reason,
-                   String status, String imageUrl, String borrowDate,
-                   String returnDate, String initialCondition, String finalToolStatus) {
-        this.id = id;
+    public BorrowHistory() {}
+    public BorrowHistory(String userId, String toolId, String toolName, String reason,
+                         String status, String imageUrl, String requestDate, String borrowDate,
+                         String returnDate, String initialCondition, long createdAt) {
         this.userId = userId;
         this.toolId = toolId;
         this.toolName = toolName;
         this.reason = reason;
         this.status = status;
         this.imageUrl = imageUrl;
+        this.requestDate = requestDate;
         this.borrowDate = borrowDate;
         this.returnDate = returnDate;
         this.initialCondition = initialCondition;
-        this.finalCondition = finalToolStatus;
+        this.createdAt = createdAt;
     }
 
     public String getId() {
@@ -94,21 +96,15 @@ public class History {
         this.returnDate = returnDate;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
-    }
+    public String getImageUrl() { return imageUrl; }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
+    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
 
     public String getInitialCondition() {
         return initialCondition;
     }
 
-    public void setInitialCondition(String initialCondition) {
-        this.initialCondition = initialCondition;
-    }
+    public void setInitialCondition(String initialCondition) { this.initialCondition = initialCondition; }
 
     public String getFinalCondition() {
         return finalCondition;
@@ -117,4 +113,12 @@ public class History {
     public void setFinalCondition(String finalCondition) {
         this.finalCondition = finalCondition;
     }
+
+    public long getCreatedAt() { return createdAt; }
+
+    public void setCreatedAt(long createdAt) { this.createdAt = createdAt; }
+
+    public String getRequestDate() { return requestDate; }
+
+    public void setRequestDate(String requestDate) { this.requestDate = requestDate; }
 }

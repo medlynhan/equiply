@@ -2,7 +2,7 @@ package com.example.equiply.helper;
 
 import androidx.annotation.NonNull;
 
-import com.example.equiply.model.BorrowRequest;
+import com.example.equiply.model.BorrowHistory;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -10,44 +10,25 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.function.Consumer;
 
-public class BorrowRequestDA {
+public class BorrowHistoryDA {
     private final DatabaseReference mDatabase;
 
-    public BorrowRequestDA() {
+    public BorrowHistoryDA() {
         this.mDatabase = FirebaseDatabase.getInstance().getReference();
     }
 
-    public void addNewRequest(String toolId, String toolName, String userId, String borrowDate, String returnDate, String reason, Consumer<Boolean> callback) {
-        String requestId = mDatabase.child("borrow_requests").push().getKey();
+    public void addBorrowHistory(BorrowHistory borrowHistory, Consumer<Boolean> callback){
+        mDatabase.child("history").push().setValue(borrowHistory).addOnCompleteListener(task -> {
+            callback.accept(task.isSuccessful());
+        });
 
-        if (requestId == null) {
-            callback.accept(false);
-            return;
-        }
-
-        BorrowRequest request = new BorrowRequest(
-                requestId,
-                toolId,
-                toolName,
-                userId,
-                borrowDate,
-                returnDate,
-                reason,
-                "pending",
-                System.currentTimeMillis()
-        );
-
-        mDatabase.child("borrow_requests")
-                .child(requestId)
-                .setValue(request)
-                .addOnSuccessListener(unused -> callback.accept(true))
-                .addOnFailureListener(e -> callback.accept(false));
     }
 
     public void hasPendingRequest(String userId, String toolId, Consumer<Boolean> callback) {
-        mDatabase.child("borrow_requests")
+        mDatabase.child("history")
                 .orderByChild("userId")
                 .equalTo(userId)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -56,11 +37,11 @@ public class BorrowRequestDA {
                         boolean hasPending = false;
 
                         for (DataSnapshot data : snapshot.getChildren()) {
-                            BorrowRequest request = data.getValue(BorrowRequest.class);
+                            BorrowHistory history = data.getValue(BorrowHistory.class);
 
-                            if (request != null &&
-                                    request.getToolId().equals(toolId) &&
-                                    request.getStatus().equalsIgnoreCase("pending")) {
+                            if (history != null &&
+                                    history.getToolId().equals(toolId) &&
+                                    history.getStatus().equalsIgnoreCase("pending")) {
                                 hasPending = true;
                                 break;
                             }
@@ -76,18 +57,44 @@ public class BorrowRequestDA {
                 });
     }
 
-    //functions utk admin
-    public void getBorrowRequestsByUserId(String userId, Consumer<ArrayList<BorrowRequest>> callback) {
-        mDatabase.child("borrow_requests")
+    public void getHistoryByUserId(String userId, Consumer<ArrayList<BorrowHistory>> callback) {
+        mDatabase.child("history")
                 .orderByChild("userId")
                 .equalTo(userId)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        ArrayList<BorrowHistory> borrowHistoryList = new ArrayList<>();
+                        if (dataSnapshot.exists()) {
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                BorrowHistory borrowHistory = snapshot.getValue(BorrowHistory.class);
+                                if (borrowHistory != null) {
+                                    borrowHistoryList.add(borrowHistory);
+                                }
+                            }
+                            Collections.reverse(borrowHistoryList);
+                        }
+                        callback.accept(borrowHistoryList);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        callback.accept(new ArrayList<>());
+                    }
+                });
+    }
+
+    public void getAllPendingRequests(Consumer<ArrayList<BorrowHistory>> callback) {
+        mDatabase.child("history")
+                .orderByChild("status")
+                .equalTo("pending")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        ArrayList<BorrowRequest> list = new ArrayList<>();
+                        ArrayList<BorrowHistory> list = new ArrayList<>();
 
                         for (DataSnapshot data : snapshot.getChildren()) {
-                            BorrowRequest request = data.getValue(BorrowRequest.class);
+                            BorrowHistory request = data.getValue(BorrowHistory.class);
                             if (request != null) {
                                 list.add(request);
                             }
@@ -103,30 +110,28 @@ public class BorrowRequestDA {
                 });
     }
 
-    public void getAllPendingRequests(Consumer<ArrayList<BorrowRequest>> callback) {
-        mDatabase.child("borrow_requests")
-                .orderByChild("status")
-                .equalTo("pending")
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        ArrayList<BorrowRequest> list = new ArrayList<>();
-
-                        for (DataSnapshot data : snapshot.getChildren()) {
-                            BorrowRequest request = data.getValue(BorrowRequest.class);
-                            if (request != null) {
-                                list.add(request);
-                            }
+    public void getAllHistories(Consumer<ArrayList<BorrowHistory>> callback) {
+        mDatabase.child("history").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                ArrayList<BorrowHistory> borrowHistoryList = new ArrayList<>();
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        BorrowHistory borrowHistory = snapshot.getValue(BorrowHistory.class);
+                        if (borrowHistory != null) {
+                            borrowHistoryList.add(borrowHistory);
                         }
-
-                        callback.accept(list);
                     }
+                    Collections.reverse(borrowHistoryList);
+                }
+                callback.accept(borrowHistoryList);
+            }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        callback.accept(new ArrayList<>());
-                    }
-                });
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                callback.accept(new ArrayList<>());
+            }
+        });
     }
 
     public void approveRequest(String requestId, String toolId, Consumer<Boolean> callback) {
@@ -155,4 +160,5 @@ public class BorrowRequestDA {
                 .addOnSuccessListener(unused -> callback.accept(true))
                 .addOnFailureListener(e -> callback.accept(false));
     }
+
 }

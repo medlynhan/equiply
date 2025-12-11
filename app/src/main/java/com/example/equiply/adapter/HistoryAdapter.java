@@ -2,6 +2,7 @@ package com.example.equiply.adapter;
 
 import android.content.Intent;
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,8 +16,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.equiply.R;
-import com.example.equiply.model.History;
+import com.example.equiply.model.BorrowHistory;
 import com.example.equiply.student_activity.HistoryDetailActivity;
+import com.google.android.material.card.MaterialCardView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,13 +26,13 @@ import java.util.List;
 public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder> {
 
     private Context context;
-    private List<History> historyList;
-    private List<History> historyListFull;
+    private List<BorrowHistory> borrowHistoryList;
+    private List<BorrowHistory> borrowHistoryListFull;
 
-    public HistoryAdapter(Context context, List<History> historyList) {
+    public HistoryAdapter(Context context, List<BorrowHistory> borrowHistoryList) {
         this.context = context;
-        this.historyList = historyList;
-        this.historyListFull = new ArrayList<>(historyList);
+        this.borrowHistoryList = borrowHistoryList;
+        this.borrowHistoryListFull = new ArrayList<>(borrowHistoryList);
     }
 
     @NonNull
@@ -42,34 +44,31 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
 
     @Override
     public void onBindViewHolder(@NonNull HistoryAdapter.HistoryViewHolder holder, int position) {
-        History history = historyList.get(position);
+        BorrowHistory borrowHistory = borrowHistoryList.get(position);
 
-        holder.tvItemTitle.setText(history.getToolName());
+        holder.tvItemTitle.setText(borrowHistory.getToolName());
 
-        String status = history.getStatus();
+        String status = borrowHistory.getStatus();
 
-        if (history.getStatus().equals("Dipinjam")) {
-            holder.tvItemStatus.setText("Sedang Dipinjam");
+        if (status.equals("Approved")) {
+            holder.tvItemStatus.setText("Dipinjam");
             holder.tvItemStatus.setTextColor(ContextCompat.getColor(context, R.color.black_modif));
+            holder.statusBadge.setCardBackgroundColor(Color.parseColor("#FF9800"));
 
-            holder.tvDate.setText(" - ");
-//            holder.tvDate.setTextColor(ContextCompat.getColor(context, R.color.red));
-        } else if (history.getStatus().equals("Menunggu Konfirmasi")) {
-            holder.tvItemStatus.setText("Menunggu Konfirmasi");
+        } else if (status.equalsIgnoreCase("Pending")) {
+            holder.tvItemStatus.setText("Menunggu");
             holder.tvItemStatus.setTextColor(ContextCompat.getColor(context, R.color.black_modif));
-
-            holder.tvDate.setText(" - ");
-//            holder.tvDate.setTextColor(ContextCompat.getColor(context, R.color.yellow));
-        } else if (history.getStatus().equals("Dikembalikan")) {
-            holder.tvItemStatus.setText("Telah Dikembalikan");
+            holder.statusBadge.setCardBackgroundColor(Color.GRAY);
+        } else if (status.equals("Returned")) {
+            holder.tvItemStatus.setText("Dikembalikan");
             holder.tvItemStatus.setTextColor(ContextCompat.getColor(context, R.color.black_modif));
-
-            holder.tvDate.setText(history.getReturnDate());
-            holder.tvDate.setTextColor(ContextCompat.getColor(context, R.color.black_modif));
+            holder.statusBadge.setCardBackgroundColor(Color.parseColor("#4CAF50"));
         }
 
+        holder.tvDate.setText(borrowHistory.getRequestDate());
+
         Glide.with(context)
-                .load(history.getImageUrl())
+                .load(borrowHistory.getImageUrl())
                 .placeholder(R.drawable.ic_img_placeholder)
                 .error(R.drawable.ic_img_placeholder)
                 .centerInside()
@@ -78,14 +77,14 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
         holder.cardView.setOnClickListener(v -> {
             Intent intent = new Intent(context, HistoryDetailActivity.class);
             // Pass all data needed for the detail screen
-            intent.putExtra("TOOL_ID", history.getToolId());
-            intent.putExtra("TOOL_NAME", history.getToolName());
-            intent.putExtra("TOOL_IMAGE", history.getImageUrl());
-            intent.putExtra("USER_ID", history.getUserId());
-            intent.putExtra("STATUS", history.getStatus());
-            intent.putExtra("BORROW_DATE", history.getBorrowDate());
-            intent.putExtra("RETURN_DATE", history.getReturnDate());
-            intent.putExtra("REASON", history.getReason());
+            intent.putExtra("TOOL_ID", borrowHistory.getToolId());
+            intent.putExtra("TOOL_NAME", borrowHistory.getToolName());
+            intent.putExtra("TOOL_IMAGE", borrowHistory.getImageUrl());
+            intent.putExtra("USER_ID", borrowHistory.getUserId());
+            intent.putExtra("STATUS", borrowHistory.getStatus());
+            intent.putExtra("BORROW_DATE", borrowHistory.getBorrowDate());
+            intent.putExtra("RETURN_DATE", borrowHistory.getReturnDate());
+            intent.putExtra("REASON", borrowHistory.getReason());
 
             context.startActivity(intent);
         });
@@ -93,19 +92,19 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
 
     @Override
     public int getItemCount() {
-        return historyList.size();
+        return borrowHistoryList.size();
     }
 
     // filter buat search bar
     public void filter(String query) {
-        historyList.clear();
+        borrowHistoryList.clear();
         if (query.isEmpty()) {
-            historyList.addAll(historyListFull);
+            borrowHistoryList.addAll(borrowHistoryListFull);
         } else {
             String lowerCaseQuery = query.toLowerCase().trim();
-            for (History item : historyListFull) {
+            for (BorrowHistory item : borrowHistoryListFull) {
                 if (item.getToolName().toLowerCase().contains(lowerCaseQuery)) {
-                    historyList.add(item);
+                    borrowHistoryList.add(item);
                 }
             }
         }
@@ -113,11 +112,11 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
     }
 
     // update data from activity
-    public void updateData(List<History> newHistoryList) {
-        this.historyList.clear();
-        this.historyList.addAll(newHistoryList);
-        this.historyListFull.clear();
-        this.historyListFull.addAll(newHistoryList);
+    public void updateData(List<BorrowHistory> newBorrowHistoryList) {
+        this.borrowHistoryList.clear();
+        this.borrowHistoryList.addAll(newBorrowHistoryList);
+        this.borrowHistoryListFull.clear();
+        this.borrowHistoryListFull.addAll(newBorrowHistoryList);
         notifyDataSetChanged();
     }
 
@@ -127,6 +126,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
         TextView tvItemStatus;
         TextView tvDate;
         ImageView ivToolImage;
+        MaterialCardView statusBadge;
 
         public HistoryViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -135,6 +135,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
             tvItemStatus = itemView.findViewById(R.id.tvItemStatus);
             tvDate = itemView.findViewById(R.id.tvDate);
             ivToolImage = itemView.findViewById(R.id.ivToolImage);
+            statusBadge = itemView.findViewById(R.id.statusBadge);
         }
     }
 }

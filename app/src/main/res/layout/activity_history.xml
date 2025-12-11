@@ -109,6 +109,7 @@
                         app:chipIcon="@android:drawable/ic_dialog_alert"
                         app:chipIconTint="#F44336"
                         app:chipBackgroundColor="@color/chip_bad_selector"
+                        app:chipStrokeColor="#F44336"
                         app:chipStrokeWidth="1dp" />
 
                 </com.google.android.material.chip.ChipGroup>
