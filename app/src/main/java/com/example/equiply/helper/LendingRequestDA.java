@@ -1,5 +1,6 @@
 package com.example.equiply.helper;
 
+import android.content.Context;
 import android.net.Uri;
 
 import androidx.annotation.NonNull;
@@ -11,38 +12,33 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.function.Consumer;
 
 public class LendingRequestDA {
     private final DatabaseReference mDatabase;
-    private final StorageReference mStorage;
+    private final CloudinaryHelper cloudinaryHelper;
 
-    public LendingRequestDA() {
+    public LendingRequestDA(Context context) {
         this.mDatabase = FirebaseDatabase.getInstance().getReference();
-        this.mStorage = FirebaseStorage.getInstance().getReference();
+        this.cloudinaryHelper = new CloudinaryHelper(context);
     }
 
     public void addNewRequest(String toolId, String toolName, String userId, String condition, String returnDate, Uri proofPhotoUri, Consumer<Boolean> callback) {
-        String requestId = mDatabase.child("return_requests").push().getKey();
+        cloudinaryHelper.uploadImage(proofPhotoUri, imageUrl -> {
+            String requestId = mDatabase.child("return_requests").push().getKey();
+            if (requestId == null) {
+                callback.accept(false);
+                return;
+            }
 
-        if (requestId == null) {
+            saveRequest(requestId, toolId, toolName, userId, condition, returnDate, imageUrl, callback);
+        },
+        errorMessage -> {
             callback.accept(false);
-            return;
         }
-
-        StorageReference photoRef = mStorage.child("return_proofs").child(requestId + ".jpg");
-
-        photoRef.putFile(proofPhotoUri)
-                .addOnSuccessListener(taskSnapshot -> {
-                    photoRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                        String imageUrl = uri.toString();
-
-                        saveRequest(requestId, toolId, toolName, userId, condition, returnDate, imageUrl, callback);
-                    }).addOnFailureListener(e -> callback.accept(false)); // -> fail dpt url
-                }).addOnFailureListener(e -> callback.accept(false)); // -> fail upload image
+        );
     }
 
     public void saveRequest(String requestId, String toolId, String toolName, String userId, String condition, String returnDate, String imageUrl, Consumer<Boolean> callback) {
@@ -62,7 +58,6 @@ public class LendingRequestDA {
                 .child(requestId)
                 .setValue(request)
                 .addOnSuccessListener(unused -> {
-                    // --- MISSING PART: UPDATE OLD STATUS ---
                     updateBorrowRequestStatus(userId, toolId, callback);
                 })
                 .addOnFailureListener(e -> callback.accept(false));

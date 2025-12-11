@@ -83,7 +83,7 @@ public class LendingFormActivity extends AppCompatActivity {
         cbConfirm = findViewById(R.id.cbConfirm);
         btnSubmitReturn = findViewById(R.id.btnSubmitReturn);
 
-        lendingRequestDA = new LendingRequestDA();
+        lendingRequestDA = new LendingRequestDA(this);
         toolId = getIntent().getStringExtra("TOOL_ID");
         toolName = getIntent().getStringExtra("TOOL_NAME");
         toolPicture = getIntent().getStringExtra("TOOL_PICTURE");
