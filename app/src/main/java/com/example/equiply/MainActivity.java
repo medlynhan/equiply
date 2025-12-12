@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.view.View;
 
 import androidx.activity.EdgeToEdge;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -19,7 +18,6 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.equiply.admin_activity.AdminDashboardActivity;
 import com.example.equiply.helper.RealtimeDatabaseFirebase;
 import com.example.equiply.helper.SessionManager;
-import com.example.equiply.services.NotificationService;
 import com.example.equiply.student_activity.HomeDashboardActivity;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -85,15 +83,6 @@ public class MainActivity extends AppCompatActivity {
                 intent = new Intent(MainActivity.this, AdminDashboardActivity.class);
             } else {
                 intent = new Intent(MainActivity.this, HomeDashboardActivity.class);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-                        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.POST_NOTIFICATIONS}, 101);
-                    } else {
-                        startService(new Intent(MainActivity.this, NotificationService.class));
-                    }
-                } else {
-                    startService(new Intent(MainActivity.this, NotificationService.class));
-                }
             }
 
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -112,16 +101,5 @@ public class MainActivity extends AppCompatActivity {
             });
         }
 
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        if (requestCode == 101) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                startService(new Intent(MainActivity.this, NotificationService.class));
-            }
-        }
     }
 }

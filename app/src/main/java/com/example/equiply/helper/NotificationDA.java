@@ -45,7 +45,6 @@ public class NotificationDA {
         notif.put("timestamp", System.currentTimeMillis());
         notif.put("loanId", loanId);
 
-        // Add to a subcollection: users/{uid}/notifications
         mDatabase.child("users")
                 .child(userId)
                 .child("notifications")
@@ -99,7 +98,7 @@ public class NotificationDA {
 
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
 
-        mDatabase.child("borrow_requests").orderByChild("userId").equalTo(userId)
+        mDatabase.child("history").orderByChild("userId").equalTo(userId)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -110,26 +109,23 @@ public class NotificationDA {
                             String loanId = loan.getKey();
 
                             Boolean notified = loan.child("isNotified").getValue(Boolean.class);
-                            Log.d("DEBUG_NOTIF", "Loan: " + toolName + " | Notified: " + notified);
 
-                            if ("approved".equals(status) && returnDateStr != null && (notified == null || !notified)) {
+                            if ("approved".equalsIgnoreCase(status) && returnDateStr != null && (notified == null || !notified)) {
                                 Date returnDate = null;
                                 try {
                                     returnDate = sdf.parse(returnDateStr);
                                 } catch (ParseException e) {
-                                    throw new RuntimeException(e);
+                                    e.printStackTrace();
+                                    continue;
                                 }
                                 if (returnDate != null) {
                                     long returnDateMillis = returnDate.getTime();
                                     long diff = returnDateMillis - now;
 
                                     if (diff < twoDaysInMillis) {
-                                        Log.d("DEBUG_NOTIF", "SENDING NOTIFICATION for " + toolName);
                                         addNotification(userId, toolName, loanId);
                                         showSystemNotification(context, toolName);
                                         loan.getRef().child("isNotified").setValue(true);
-                                    } else {
-                                        Log.d("DEBUG_NOTIF", "Not due yet. Days left: " + (diff / (24*60*60*1000)));
                                     }
                                 }
 
