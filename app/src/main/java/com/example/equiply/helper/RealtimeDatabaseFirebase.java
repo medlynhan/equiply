@@ -26,6 +26,10 @@ public class RealtimeDatabaseFirebase {
         this.mDatabase = FirebaseDatabase.getInstance().getReference();
         this.cloudinaryHelper = new CloudinaryHelper(context);
     }
+    public DatabaseReference getReference(String path) {
+        // Since mDatabase is the root reference, we use .child(path)
+        return mDatabase.child(path);
+    }
 
     public void addNewUser(Context context,String uid, String name, String nim, String email){
         User newUser = new User(uid, name, nim, email);

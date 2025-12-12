@@ -15,11 +15,12 @@ import com.example.equiply.R;
 
 import java.util.ArrayList;
 
-public class BrokenToolsAdapter extends RecyclerView.Adapter<BrokenToolsAdapter.ViewHolder> {
+public class BorrowedToolsAdapter extends RecyclerView.Adapter<BorrowedToolsAdapter.ViewHolder> {
 
     private final ArrayList<String> list;
 
-    public BrokenToolsAdapter(ArrayList<String> list) {
+
+    public BorrowedToolsAdapter(ArrayList<String> list) {
         this.list = list;
     }
 
@@ -36,7 +37,7 @@ public class BrokenToolsAdapter extends RecyclerView.Adapter<BrokenToolsAdapter.
         String item = list.get(position);
 
         holder.tvName.setText(item);
-        holder.tvStatus.setText("Broken");
+        holder.tvStatus.setText("Borrowed");
     }
 
     @Override

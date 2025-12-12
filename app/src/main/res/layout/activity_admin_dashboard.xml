@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F2F8FC">
+    android:background="#F2F8FC"
+    tools:context=".admin_activity.AdminDashboardActivity">
 
-    <!-- SCROLL AREA -->
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:id="@+id/scrollArea"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -22,7 +23,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- HEADER -->
             <FrameLayout
                 android:id="@+id/headerContainer"
                 android:layout_width="match_parent"
@@ -60,7 +60,6 @@
                         app:layout_constraintTop_toBottomOf="@id/tvGreeting"
                         app:layout_constraintStart_toStartOf="parent" />
 
-
                     <TextView
                         android:id="@+id/tvTime"
                         android:layout_width="wrap_content"
@@ -87,12 +86,11 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/tvTime" />
 
-
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </FrameLayout>
 
-            <!-- STAT CARDS -->
             <LinearLayout
+                android:id="@+id/statCardsContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -164,8 +162,8 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- SECTION ALAT RUSAK -->
             <LinearLayout
+                android:id="@+id/brokenToolsSection"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
@@ -174,14 +172,12 @@
                 android:padding="18dp"
                 android:paddingBottom="26dp">
 
-                <!-- HEADER DIVIDER -->
                 <View
                     android:layout_width="65dp"
                     android:layout_height="6dp"
                     android:layout_gravity="center"
                     android:background="@drawable/white_divider" />
 
-                <!-- TITLE & LINK -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -209,16 +205,16 @@
                         android:textStyle="bold" />
                 </LinearLayout>
 
-                <!-- BROKEN TOOLS LIST -->
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rvBrokenTools"
                     android:layout_width="match_parent"
-                    android:layout_height="200dp"
+                    android:layout_height="180dp"
+                    android:nestedScrollingEnabled="false"
                     android:layout_marginTop="14dp" />
             </LinearLayout>
 
-            <!-- SECTION DIPINJAM -->
             <LinearLayout
+                android:id="@+id/borrowedToolsSection"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="#6B9DBB"
@@ -260,15 +256,15 @@
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rvBorrowedTools"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="180dp"
+                    android:nestedScrollingEnabled="false"
                     android:layout_marginTop="12dp" />
             </LinearLayout>
 
         </LinearLayout>
 
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
-    <!-- BOTTOM NAV -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/adminNavView"
         android:layout_width="0dp"

@@ -19,6 +19,7 @@ import com.example.equiply.shared_activity.ToolListActivity;
 import com.example.equiply.student_activity.ProfileActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.example.equiply.adapter.BrokenToolsAdapter;
+import com.example.equiply.adapter.BorrowedToolsAdapter;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -35,10 +36,15 @@ public class AdminDashboardActivity extends AppCompatActivity {
     // Stat cards
     private TextView tvTotalBorrowed, tvTotalBroken;
 
-    // RecyclerView
+    // RecyclerView BROKEN TOOLS
     private RecyclerView rvBrokenTools;
     private BrokenToolsAdapter brokenToolsAdapter;
     private final ArrayList<String> brokenToolsList = new ArrayList<>();
+
+    // RecyclerView BORROWED TOOLS
+    private RecyclerView rvBorrowedTools;
+    private BorrowedToolsAdapter borrowedToolsAdapter;
+    private final ArrayList<String> borrowedToolsList = new ArrayList<>();
 
     private final Handler timeHandler = new Handler();
 
@@ -65,6 +71,7 @@ public class AdminDashboardActivity extends AppCompatActivity {
         tvTotalBroken = findViewById(R.id.tvTotalBroken);
 
         rvBrokenTools = findViewById(R.id.rvBrokenTools);
+        rvBorrowedTools = findViewById(R.id.rvBorrowedTools);
         adminNavView = findViewById(R.id.adminNavView);
 
         adminNavView.setSelectedItemId(R.id.admin_nav_home);
@@ -81,7 +88,7 @@ public class AdminDashboardActivity extends AppCompatActivity {
                 startActivity(intent);
                 return true;
 
-            } else if (itemId == R.id.admin_add_item) {   // use the correct menu id
+            } else if (itemId == R.id.admin_add_item) {
                 intent = new Intent(AdminDashboardActivity.this, AddToolActivity.class);
                 startActivity(intent);
                 return true;
@@ -104,8 +111,13 @@ public class AdminDashboardActivity extends AppCompatActivity {
         tvTotalBorrowed.setText("3");
         tvTotalBroken.setText("3");
 
+        // Load data dan setup Recycler
         loadBrokenToolsDummy();
+        loadBorrowedToolsDummy();
+
         setupBrokenToolsRecycler();
+        setupBorrowedToolsRecycler();
+
         startLiveClock();
     }
 
@@ -127,7 +139,7 @@ public class AdminDashboardActivity extends AppCompatActivity {
         });
     }
 
-
+    //TODO harusnya ambil dari history
     private void loadBrokenToolsDummy() {
         brokenToolsList.clear();
         brokenToolsList.add("Obeng Rusak");
@@ -135,11 +147,27 @@ public class AdminDashboardActivity extends AppCompatActivity {
         brokenToolsList.add("Kunci Inggris Aus");
     }
 
+    //TODO harusnya ambil dari history
+    private void loadBorrowedToolsDummy() {
+        borrowedToolsList.clear();
+        borrowedToolsList.add("Kamera Nikon D3500 - Mahasiswa A");
+        borrowedToolsList.add("Tripod Manfrotto - Mahasiswa B");
+        borrowedToolsList.add("Kabel HDMI 5m - Mahasiswa C");
+    }
 
     private void setupBrokenToolsRecycler() {
-        rvBrokenTools.setLayoutManager(new LinearLayoutManager(this));
+        // PERBAIKAN: Ganti LinearLayoutManager.HORIZONTAL ke VERTICAL
+        rvBrokenTools.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         brokenToolsAdapter = new BrokenToolsAdapter(brokenToolsList);
         rvBrokenTools.setAdapter(brokenToolsAdapter);
+    }
+
+    // Fungsi Baru: Setup Borrowed Tools Recycler
+    private void setupBorrowedToolsRecycler() {
+        // PERBAIKAN: Ganti LinearLayoutManager.HORIZONTAL ke VERTICAL
+        rvBorrowedTools.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        borrowedToolsAdapter = new BorrowedToolsAdapter(borrowedToolsList);
+        rvBorrowedTools.setAdapter(borrowedToolsAdapter);
     }
 
     @Override
