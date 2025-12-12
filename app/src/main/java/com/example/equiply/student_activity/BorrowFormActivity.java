@@ -6,7 +6,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.content.Intent;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -17,13 +16,13 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.bumptech.glide.Glide;
 import com.example.equiply.R;
-import com.example.equiply.helper.AuthFirebase;
-import com.example.equiply.helper.BorrowRequestDA;
-import com.example.equiply.helper.RealtimeDatabaseFirebase;
+import com.example.equiply.helper.BorrowHistoryDA;
+import com.example.equiply.model.BorrowHistory;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.firebase.auth.FirebaseUser;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 
 public class BorrowFormActivity extends AppCompatActivity {
 
@@ -32,9 +31,9 @@ public class BorrowFormActivity extends AppCompatActivity {
     private TextInputEditText etBorrowDate, etReturnDate, etReason;
     private Button btnSubmit;
     private CheckBox cbAgreement;
-    private String toolId, toolName, toolPicture;
+    private String toolId, toolName, toolPicture, toolStatus;
     private String userId;
-    private BorrowRequestDA borrowRequestDA;
+    private BorrowHistoryDA borrowHistoryDA;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,11 +55,12 @@ public class BorrowFormActivity extends AppCompatActivity {
         btnSubmit = findViewById(R.id.btnSubmit);
         cbAgreement = findViewById(R.id.cbAgreement);
 
-        borrowRequestDA = new BorrowRequestDA();
+        borrowHistoryDA = new BorrowHistoryDA();
 
         toolId = getIntent().getStringExtra("TOOL_ID");
         toolName = getIntent().getStringExtra("TOOL_NAME");
         toolPicture = getIntent().getStringExtra("TOOL_PICTURE");
+        toolStatus = getIntent().getStringExtra("TOOL_STATUS");
         userId = getIntent().getStringExtra("USER_ID");
         tvToolName.setText(toolName);
 
@@ -95,6 +95,9 @@ public class BorrowFormActivity extends AppCompatActivity {
         String returnDate = etReturnDate.getText().toString().trim();
         String reason = etReason.getText().toString().trim();
 
+        String requestAt = (new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()))
+                .format(Calendar.getInstance().getTime());
+
         if (borrowDate.isEmpty() || returnDate.isEmpty() || reason.isEmpty()) {
             Toast.makeText(this, "Semua field wajib diisi.", Toast.LENGTH_SHORT).show();
             return;
@@ -105,14 +108,20 @@ public class BorrowFormActivity extends AppCompatActivity {
             return;
         }
 
-        borrowRequestDA.addNewRequest(
-                toolId,
-                toolName,
-                userId,
-                borrowDate,
-                returnDate,
-                reason,
-                success -> {
+         borrowHistoryDA.addBorrowHistory(
+                new BorrowHistory(
+                        userId,
+                        toolId,
+                        toolName,
+                        reason,
+                        "Pending",
+                        toolPicture,
+                        requestAt,
+                        borrowDate,
+                        returnDate,
+                        toolStatus,
+                        System.currentTimeMillis()
+                ), success -> {
                     if (success) {
                         Toast.makeText(this, "Peminjaman berhasil diajukan!", Toast.LENGTH_LONG).show();
                         finish();

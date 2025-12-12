@@ -12,7 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.bumptech.glide.Glide;
 import com.example.equiply.R;
 import com.example.equiply.helper.AuthFirebase;
-import com.example.equiply.helper.BorrowRequestDA;
+import com.example.equiply.helper.BorrowHistoryDA;
 import com.example.equiply.helper.RealtimeDatabaseFirebase;
 import com.example.equiply.model.Tool;
 import com.google.android.material.button.MaterialButton;
@@ -27,7 +27,7 @@ public class ToolDetailActivity extends AppCompatActivity {
     private MaterialCardView statusBadge;
     private String userId;
     private AuthFirebase auth;
-    private BorrowRequestDA borrowRequestDA;
+    private BorrowHistoryDA borrowHistoryDA;
     private RealtimeDatabaseFirebase db;
 
     @Override
@@ -45,7 +45,7 @@ public class ToolDetailActivity extends AppCompatActivity {
         btnPinjam = findViewById(R.id.btnPinjam);
         statusBadge = findViewById(R.id.statusBadge);
 
-        borrowRequestDA = new BorrowRequestDA();
+        borrowHistoryDA = new BorrowHistoryDA();
         db = new RealtimeDatabaseFirebase(this);
         auth = new AuthFirebase(this);
 
@@ -91,7 +91,7 @@ public class ToolDetailActivity extends AppCompatActivity {
             return;
         }
 
-        borrowRequestDA.hasPendingRequest(userId, tool.getId(), hasPending -> {
+        borrowHistoryDA.hasPendingRequest(userId, tool.getId(), hasPending -> {
             if (hasPending) {
                 btnPinjam.setEnabled(false);
                 btnPinjam.setText("Menunggu Persetujuan");
@@ -106,6 +106,7 @@ public class ToolDetailActivity extends AppCompatActivity {
                     intent.putExtra("TOOL_ID", tool.getId());
                     intent.putExtra("TOOL_NAME", tool.getName());
                     intent.putExtra("TOOL_PICTURE", tool.getImageUrl());
+                    intent.putExtra("TOOL_STATUS", tool.getToolStatus());
                     intent.putExtra("USER_ID", userId);
                     startActivity(intent);
                 });

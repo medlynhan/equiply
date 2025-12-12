@@ -21,6 +21,9 @@
             android:name=".student_activity.BorrowFormActivity"
             android:exported="false" />
         <activity
+            android:name=".student_activity.LendingFormActivity"
+            android:exported="false" />
+        <activity
             android:name=".student_activity.ToolDetailActivity"
             android:exported="false" />
         <activity
@@ -37,6 +40,9 @@
             android:exported="false" />
         <activity
             android:name=".student_activity.HistoryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".student_activity.HistoryDetailActivity"
             android:exported="false" />
         <activity
             android:name=".student_activity.ProfileActivity"
