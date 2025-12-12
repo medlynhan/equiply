@@ -207,7 +207,7 @@ public class ToolListActivity extends AppCompatActivity {
                     toolListFull.addAll(tools);
                 } else {
                     for (Tool tool : tools) {
-                        if ("Baik".equalsIgnoreCase(tool.getToolStatus().trim())) {
+                        if ("Tersedia".equalsIgnoreCase(tool.getStatus().trim())) {
                             toolList.add(tool);
                             toolListFull.add(tool);
                         }
