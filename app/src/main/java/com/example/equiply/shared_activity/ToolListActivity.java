@@ -25,7 +25,6 @@ import com.example.equiply.model.Tool;
 import com.example.equiply.student_activity.HistoryActivity;
 import com.example.equiply.student_activity.HomeDashboardActivity;
 import com.example.equiply.student_activity.NotificationActivity;
-import com.example.equiply.student_activity.ProfileActivity;
 import com.example.equiply.student_activity.ToolDetailActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.chip.Chip;
@@ -202,7 +201,7 @@ public class ToolListActivity extends AppCompatActivity {
                     toolListFull.addAll(tools);
                 } else {
                     for (Tool tool : tools) {
-                        if ("Baik".equalsIgnoreCase(tool.getToolStatus().trim())) {
+                        if ("Tersedia".equalsIgnoreCase(tool.getStatus().trim())) {
                             toolList.add(tool);
                             toolListFull.add(tool);
                         }

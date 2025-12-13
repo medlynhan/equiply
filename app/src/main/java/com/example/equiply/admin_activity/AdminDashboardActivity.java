@@ -16,8 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.equiply.R;
 import com.example.equiply.shared_activity.ToolListActivity;
-import com.example.equiply.student_activity.HistoryActivity;
-import com.example.equiply.student_activity.ProfileActivity;
+import com.example.equiply.shared_activity.ProfileActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.example.equiply.adapter.BrokenToolsAdapter;
 import com.example.equiply.adapter.BorrowedToolsAdapter;
@@ -37,7 +36,7 @@ public class AdminDashboardActivity extends AppCompatActivity {
     private RealtimeDatabaseFirebase db;
 
     // Header items
-    private TextView tvGreeting, tvAdminName, tvTime, tvDate;
+    private TextView tvAdminName, tvTime, tvDate;
 
     // Stat cards
     private TextView tvTotalBorrowed, tvTotalBroken;
@@ -47,6 +46,7 @@ public class AdminDashboardActivity extends AppCompatActivity {
     private RecyclerView rvBrokenTools;
     private BrokenToolsAdapter brokenToolsAdapter;
     private final ArrayList<Tool> brokenToolsList = new ArrayList<>();
+
     // RecyclerView BORROWED TOOLS
     private RecyclerView rvBorrowedTools;
     private BorrowedToolsAdapter borrowedToolsAdapter;
@@ -69,7 +69,6 @@ public class AdminDashboardActivity extends AppCompatActivity {
             return insets;
         });
 
-        tvGreeting = findViewById(R.id.tvGreeting);
         tvAdminName = findViewById(R.id.tvAdminName);
         tvTime = findViewById(R.id.tvTime);
         tvDate = findViewById(R.id.tvDate);
@@ -137,6 +136,14 @@ public class AdminDashboardActivity extends AppCompatActivity {
         startLiveClock();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (adminNavView.getSelectedItemId() != R.id.navigation_home){
+            adminNavView.setSelectedItemId(R.id.navigation_home);
+        }
+    }
+
     private void loadAdminName() {
         String uid = FirebaseAuth.getInstance().getCurrentUser() != null
                 ? FirebaseAuth.getInstance().getCurrentUser().getUid()
@@ -199,8 +206,7 @@ public class AdminDashboardActivity extends AppCompatActivity {
                     brokenToolsList.add(tool);
                 }
 
-                if ("Dipinjam".equalsIgnoreCase(tool.getStatus())
-                        || "Tidak tersedia".equalsIgnoreCase(tool.getStatus())) {
+                if ("Dipinjam".equalsIgnoreCase(tool.getStatus())) {
                     borrowedToolsList.add(tool);
                 }
             }

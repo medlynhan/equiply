@@ -18,6 +18,7 @@ import com.example.equiply.adapter.HistoryAdapter;
 import com.example.equiply.helper.BorrowHistoryDA;
 import com.example.equiply.helper.SessionManager;
 import com.example.equiply.model.BorrowHistory;
+import com.example.equiply.shared_activity.ProfileActivity;
 import com.example.equiply.shared_activity.ToolListActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.card.MaterialCardView;

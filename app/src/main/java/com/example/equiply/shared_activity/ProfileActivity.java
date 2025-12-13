@@ -1,4 +1,4 @@
-package com.example.equiply.student_activity;
+package com.example.equiply.shared_activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,24 +16,20 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.equiply.R;
 import com.example.equiply.helper.AuthFirebase;
 import com.example.equiply.helper.RealtimeDatabaseFirebase;
-import com.example.equiply.model.User; // Import the User model
-import com.google.firebase.auth.FirebaseAuth;
-import com.example.equiply.shared_activity.ChangePasswordActivity;
-import android.content.Intent;
+import com.example.equiply.helper.SessionManager;
 
 
 public class ProfileActivity extends AppCompatActivity {
 
     private AuthFirebase auth;
     private RealtimeDatabaseFirebase db;
+    private SessionManager session;
 
-    // UI Elements
     private TextView textName, textRole, textEmail, labelNim, textNim, profileTitle;
     private Button buttonChangePassword, buttonLogout;
 
-    // Define user roles constants
-    private static final String ROLE_MAHASISWA = "student"; // Updated to match your DB 'student' value
-    private static final String ROLE_ADMIN = "Admin"; // Use your actual Admin role string
+    private static final String ROLE_MAHASISWA = "student";
+    private static final String ROLE_ADMIN = "Admin";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,17 +42,14 @@ public class ProfileActivity extends AppCompatActivity {
             return insets;
         });
 
-        // Initialize Firebase Helpers
         db = new RealtimeDatabaseFirebase(this);
         auth = new AuthFirebase(this);
+        session = new SessionManager(this);
 
-        // 1. Initialize Views
         initializeViews();
 
-        // 2. Load User Profile Data using your helper method
         loadUserProfileData();
 
-        // 3. Set up Event Listeners
         buttonChangePassword.setOnClickListener(v -> handleChangePassword());
         buttonLogout.setOnClickListener(v -> handleLogout());
     }
@@ -66,8 +59,6 @@ public class ProfileActivity extends AppCompatActivity {
         textName = findViewById(R.id.text_name);
         textRole = findViewById(R.id.text_role);
         textEmail = findViewById(R.id.text_email);
-
-        // These fields are only found in the Mahasiswa layout (R.id.label_nim and R.id.text_nim)
         labelNim = findViewById(R.id.label_nim);
         textNim = findViewById(R.id.text_nim);
 
@@ -76,26 +67,20 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void loadUserProfileData() {
-        // Warning fix: Get the current user safely
-        String uid = FirebaseAuth.getInstance().getCurrentUser() != null ?
-                FirebaseAuth.getInstance().getCurrentUser().getUid() : null;
+        String uid = session.getUserId();
 
         if (uid != null) {
-            // **FIXED:** Use your existing getUserByID method from RealtimeDatabaseFirebase
             db.getUserByID(uid, user -> {
                 if (user != null) {
-                    // Get data from the User model
                     String name = user.getName();
                     String email = user.getEmail();
                     String role = user.getRole();
                     String nim = user.getNim();
 
-                    // Update UI with common data
                     textName.setText(name != null ? name : "N/A");
                     textRole.setText(role != null ? role : "N/A");
                     textEmail.setText(email != null ? email : "N/A");
 
-                    // Handle Role-Specific UI (NIM visibility)
                     handleRoleSpecificUI(role, nim);
 
                 } else {
@@ -109,24 +94,22 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void handleRoleSpecificUI(String role, String nim) {
-        // Ensure you match the role string saved in your Firebase DB (e.g., "student" or "Admin")
         if (role != null && role.equalsIgnoreCase(ROLE_MAHASISWA)) {
-            // Mahasiswa: Show NIM fields (if they were included in the current layout)
+            textRole.setText("Mahasiswa");
             if (labelNim != null && textNim != null) {
                 labelNim.setVisibility(View.VISIBLE);
                 textNim.setVisibility(View.VISIBLE);
                 textNim.setText(nim != null ? nim : "N/A");
             }
-            // Use String resource for profile title (Good practice)
             profileTitle.setText("Profile");
 
         } else if (role != null && role.equalsIgnoreCase(ROLE_ADMIN)) {
-            // Admin: Hide NIM fields
+            textRole.setText("Admin");
             if (labelNim != null && textNim != null) {
                 labelNim.setVisibility(View.GONE);
                 textNim.setVisibility(View.GONE);
             }
-            profileTitle.setText("Profile Mahasiswa");
+            profileTitle.setText("Profile Admin");
         }
     }
 

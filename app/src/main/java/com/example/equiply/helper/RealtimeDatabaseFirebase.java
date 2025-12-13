@@ -162,7 +162,7 @@ public class RealtimeDatabaseFirebase {
     }
 
     public void getBorrowedToolsCount(CountCallback callback) {
-        mDatabase.child("borrow_history")
+        mDatabase.child("tools").orderByChild("status").equalTo("Dipinjam")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -177,7 +177,7 @@ public class RealtimeDatabaseFirebase {
     }
 
     public void getBrokenToolsCount(CountCallback callback) {
-        mDatabase.child("broken_history")
+        mDatabase.child("tools").orderByChild("toolStatus").equalTo("Rusak")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {

@@ -121,7 +121,7 @@
                         android:id="@+id/tvTotalBorrowed"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="3"
+                        android:text="0"
                         android:textColor="#04456A"
                         android:textSize="36sp"
                         android:textStyle="bold" />
@@ -154,7 +154,7 @@
                         android:id="@+id/tvTotalBroken"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="3"
+                        android:text="0"
                         android:textColor="#04456A"
                         android:textSize="36sp"
                         android:textStyle="bold" />
@@ -261,7 +261,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@color/white_modif"
-        app:itemIconSize="28dp"
+        app:itemIconSize="30sp"
         app:itemTextColor="@drawable/selector_nav_items"
         app:itemIconTint="@drawable/selector_nav_items"
         app:menu="@menu/admin_menu"

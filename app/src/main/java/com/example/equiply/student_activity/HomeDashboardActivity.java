@@ -11,12 +11,10 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.equiply.R;
-import com.example.equiply.helper.AuthFirebase;
-import com.example.equiply.helper.RealtimeDatabaseFirebase;
 import com.example.equiply.helper.SessionManager;
+import com.example.equiply.shared_activity.ProfileActivity;
 import com.example.equiply.shared_activity.ToolListActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.auth.FirebaseUser;
 
 public class HomeDashboardActivity extends AppCompatActivity {
     private SessionManager session;
