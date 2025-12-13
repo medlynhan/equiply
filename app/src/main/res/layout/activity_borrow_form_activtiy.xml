@@ -218,6 +218,8 @@
                         app:boxCornerRadiusBottomStart="12dp"
                         app:boxCornerRadiusTopEnd="12dp"
                         app:boxCornerRadiusTopStart="12dp"
+                        app:hintTextColor="@color/blue_medium"
+                        app:boxStrokeColor="@color/blue_medium"
                         app:counterEnabled="true"
                         app:counterMaxLength="200"
                         app:startIconDrawable="@android:drawable/ic_menu_edit"

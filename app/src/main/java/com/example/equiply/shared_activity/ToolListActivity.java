@@ -28,7 +28,6 @@ import com.example.equiply.model.Tool;
 import com.example.equiply.student_activity.HistoryActivity;
 import com.example.equiply.student_activity.HomeDashboardActivity;
 import com.example.equiply.student_activity.NotificationActivity;
-import com.example.equiply.student_activity.ProfileActivity;
 import com.example.equiply.student_activity.ToolDetailActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.chip.Chip;
@@ -150,7 +149,7 @@ public class ToolListActivity extends AppCompatActivity {
                 return true;
             } else if (itemId == R.id.admin_nav_tools) {
                 return true;
-            } else if (itemId == R.id.admin_nav_addTools) {
+            } else if (itemId == R.id.admin_add_item) {
                 intent = new Intent(this, AddToolActivity.class);
                 startActivity(intent);
                 return true;
