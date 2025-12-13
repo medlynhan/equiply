@@ -9,26 +9,11 @@
     android:fitsSystemWindows="false"
     tools:context=".student_activity.HomeDashboardActivity">
 
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottomNavigationView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="@color/white_modif"
-        app:itemActiveIndicatorStyle="@null"
-        app:itemIconSize="30sp"
-        app:itemIconTint="@drawable/selector_nav_items"
-        app:itemTextColor="@drawable/selector_nav_items"
-        app:labelVisibilityMode="labeled"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:menu="@menu/bottom_menu" />
-
     <ScrollView
         android:id="@+id/content_scroll_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/bottomNavigationView"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">

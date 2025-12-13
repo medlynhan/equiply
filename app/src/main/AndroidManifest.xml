@@ -14,11 +14,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Equiply">
         <activity
+            android:name=".admin_activity.ReportActivity"
+            android:exported="false" />
+        <activity
+            android:name=".BaseNavigationActivity"
+            android:exported="false" />
+        <activity
             android:name=".helper.QRCodeScanner"
             android:screenOrientation="fullSensor"
             android:stateNotNeeded="true"
             android:theme="@style/Theme.AppCompat.NoActionBar"
-            tools:replace="android:screenOrientation"/>
+            tools:replace="android:screenOrientation" />
         <activity
             android:name=".admin_activity.EditToolActivity"
             android:exported="false" />
@@ -76,7 +82,6 @@
         <activity
             android:name=".shared_activity.ChangePasswordActivity"
             android:exported="false" />
-
     </application>
 
 </manifest>

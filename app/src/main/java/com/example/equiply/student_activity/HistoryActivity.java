@@ -1,6 +1,5 @@
 package com.example.equiply.student_activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -9,35 +8,28 @@ import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.equiply.BaseNavigationActivity;
 import com.example.equiply.R;
 import com.example.equiply.adapter.HistoryAdapter;
 import com.example.equiply.helper.BorrowHistoryDA;
 import com.example.equiply.helper.SessionManager;
 import com.example.equiply.model.BorrowHistory;
-import com.example.equiply.shared_activity.ProfileActivity;
-import com.example.equiply.shared_activity.ToolListActivity;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 
 import java.util.ArrayList;
 
 
-public class HistoryActivity extends AppCompatActivity {
+public class HistoryActivity extends BaseNavigationActivity {
     private RecyclerView rvHistory;
     private HistoryAdapter historyAdapter;
     private BorrowHistoryDA borrowHistoryDA;
     private EditText etSearch;
     private ChipGroup chipGroupFilters;
     private Chip chipAll;
-    private MaterialCardView statusBadge;
-    private BottomNavigationView bottomNavigationView;
-
     private ArrayList<BorrowHistory> borrowHistoryList;
     private ArrayList<BorrowHistory> borrowHistoryListFull;
 
@@ -50,8 +42,6 @@ public class HistoryActivity extends AppCompatActivity {
 
         borrowHistoryDA = new BorrowHistoryDA();
 
-        setupBottomNavigation();
-
         setupRecyclerView();
         setupSearch();
         setupFilters();
@@ -62,7 +52,6 @@ public class HistoryActivity extends AppCompatActivity {
         super.onResume();
 
         loadHistories();
-        updateBottomNavigationSelection();
     }
 
 
@@ -71,80 +60,11 @@ public class HistoryActivity extends AppCompatActivity {
         etSearch = findViewById(R.id.etSearch);
         chipGroupFilters = findViewById(R.id.chipGroupFilters);
         chipAll = findViewById(R.id.chipAll);
-        statusBadge = findViewById(R.id.statusBadge);
-        bottomNavigationView = findViewById(R.id.bottomNavigationView);
     }
 
-    private void setupBottomNavigation() {
-        bottomNavigationView.getMenu().clear();
-        bottomNavigationView.inflateMenu(R.menu.bottom_menu);
-        bottomNavigationView.setSelectedItemId(R.id.navigation_history);
-
-        bottomNavigationView.setOnItemSelectedListener(item -> {
-            int itemId = item.getItemId();
-            Intent intent;
-
-            if (itemId == R.id.navigation_home) {
-                intent = new Intent(this, HomeDashboardActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-                return true;
-            } else if (itemId == R.id.navigation_history) {
-                return true;
-            } else if (itemId == R.id.navigation_box) {
-                intent = new Intent(this, ToolListActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-                return true;
-            } else if (itemId == R.id.navigation_notification) {
-                intent = new Intent(this, NotificationActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-                return true;
-            } else if (itemId == R.id.navigation_profile) {
-                intent = new Intent(this, ProfileActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-                return true;
-            }
-            return false;
-        });
-        String type = getIntent().getStringExtra("HISTORY_TYPE");
-
-        if ("BROKEN".equals(type)) {
-            // tampilkan history alat rusak
-            loadBrokenHistory();
-        } else if ("BORROWED".equals(type)) {
-            // tampilkan history peminjaman
-            loadBorrowedHistory();
-        } else {
-            // default (misalnya buka history semua)
-            loadAllHistory();
-        }
-    }
-    private void loadBrokenHistory() {
-        // nanti ambil data alat rusak
-    }
-
-    private void loadBorrowedHistory() {
-        // nanti ambil data peminjaman
-    }
-
-    private void loadAllHistory() {
-        // fallback
-    }
-
-    private void updateBottomNavigationSelection() {
-        if (bottomNavigationView != null) {
-            Menu menu = bottomNavigationView.getMenu();
-            MenuItem item;
-
-            item = menu.findItem(R.id.navigation_history);
-
-            if (item != null) {
-                item.setChecked(true);
-            }
-        }
+    @Override
+    protected int getNavigationMenuItemId() {
+        return R.id.navigation_history;
     }
 
     private void setupRecyclerView() {
@@ -159,7 +79,6 @@ public class HistoryActivity extends AppCompatActivity {
     }
 
     private void loadHistories() {
-        // get current userid
         SessionManager session = new SessionManager(this);
         String userId = session.getUserId();
 
@@ -222,7 +141,6 @@ public class HistoryActivity extends AppCompatActivity {
             } else if (checkedChipId == R.id.chipReturned) {
                 matchesCategory = "Returned".equalsIgnoreCase(borrowHistory.getStatus());
             }
-            // if chipAll is selected, matchesCategory remains true
 
             if (matchesSearch && matchesCategory) {
                 filteredList.add(borrowHistory);
@@ -231,24 +149,4 @@ public class HistoryActivity extends AppCompatActivity {
         historyAdapter.updateData(filteredList);
     }
 
-    private void filterHistory(int chipID) {
-        ArrayList<BorrowHistory> filteredList = new ArrayList<>();
-        
-        if (chipID == R.id.chipAll) {
-            filteredList.addAll(borrowHistoryListFull);
-        } else if (chipID == R.id.chipActive) {
-            for (BorrowHistory borrowHistory : borrowHistoryListFull) {
-                if ("Dipinjam".equalsIgnoreCase(borrowHistory.getStatus())) {
-                    filteredList.add(borrowHistory);
-                }
-            }
-        } else if (chipID == R.id.chipReturned) {
-            for (BorrowHistory borrowHistory : borrowHistoryListFull) {
-                if ("Dikembalikan".equalsIgnoreCase(borrowHistory.getStatus())) {
-                    filteredList.add(borrowHistory);
-                }
-            }
-        }
-        historyAdapter.updateData(filteredList);
-    }
 }

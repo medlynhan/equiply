@@ -66,7 +66,7 @@ public class AuthFirebase {
 
                                 Intent intent;
 
-                                if (userModel.getRole().equals("admin")) {
+                                if (userModel.getRole().equalsIgnoreCase("admin")) {
                                     intent = new Intent(context, AdminDashboardActivity.class);
                                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |  Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                     context.startActivity(intent);

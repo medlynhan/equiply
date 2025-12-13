@@ -3,21 +3,15 @@ package com.example.equiply.admin_activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.View;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.equiply.BaseNavigationActivity;
 import com.example.equiply.R;
 import com.example.equiply.shared_activity.ToolListActivity;
-import com.example.equiply.shared_activity.ProfileActivity;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.example.equiply.adapter.BrokenToolsAdapter;
 import com.example.equiply.adapter.BorrowedToolsAdapter;
 import com.example.equiply.helper.RealtimeDatabaseFirebase;
@@ -30,9 +24,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
-public class AdminDashboardActivity extends AppCompatActivity {
-
-    private BottomNavigationView adminNavView;
+public class AdminDashboardActivity extends BaseNavigationActivity {
     private RealtimeDatabaseFirebase db;
 
     // Header items
@@ -59,15 +51,8 @@ public class AdminDashboardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_admin_dashboard);
-        db = new RealtimeDatabaseFirebase(this);
 
-        View root = findViewById(android.R.id.content);
-        ViewCompat.setOnApplyWindowInsetsListener(root, (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top,
-                    systemBars.right, systemBars.bottom);
-            return insets;
-        });
+        db = new RealtimeDatabaseFirebase(this);
 
         tvAdminName = findViewById(R.id.tvAdminName);
         tvTime = findViewById(R.id.tvTime);
@@ -78,7 +63,6 @@ public class AdminDashboardActivity extends AppCompatActivity {
 
         rvBrokenTools = findViewById(R.id.rvBrokenTools);
         rvBorrowedTools = findViewById(R.id.rvBorrowedTools);
-        adminNavView = findViewById(R.id.adminNavView);
         tvSeeAllBroken = findViewById(R.id.tvBrokenSeeMore);
         tvSeeAllBorrowed = findViewById(R.id.tvSeeAllBorrowed);
 
@@ -94,39 +78,6 @@ public class AdminDashboardActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        adminNavView.setSelectedItemId(R.id.admin_nav_home);
-
-        adminNavView.setOnItemSelectedListener(item -> {
-            int itemId = item.getItemId();
-            Intent intent;
-
-            if (itemId == R.id.admin_nav_home) {
-                return true;
-
-            } else if (itemId == R.id.admin_nav_tools) {
-                intent = new Intent(AdminDashboardActivity.this, ToolListActivity.class);
-                startActivity(intent);
-                return true;
-
-            } else if (itemId == R.id.admin_add_item) {
-                intent = new Intent(AdminDashboardActivity.this, AddToolActivity.class);
-                startActivity(intent);
-                return true;
-
-            } else if (itemId == R.id.admin_nav_report) {
-                // TODO: Open admin report page
-                return true;
-
-            } else if (itemId == R.id.admin_nav_profil) {
-                intent = new Intent(AdminDashboardActivity.this, ProfileActivity.class);
-                startActivity(intent);
-                return true;
-            }
-
-            return false;
-        });
-
-
         // Load data dan setup Recycler
         loadAdminName();
         loadStatistics();
@@ -134,14 +85,6 @@ public class AdminDashboardActivity extends AppCompatActivity {
         setupBorrowedToolsRecycler();
         loadDashboardTools();
         startLiveClock();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (adminNavView.getSelectedItemId() != R.id.navigation_home){
-            adminNavView.setSelectedItemId(R.id.navigation_home);
-        }
     }
 
     private void loadAdminName() {
@@ -234,5 +177,10 @@ public class AdminDashboardActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         timeHandler.removeCallbacksAndMessages(null);
+    }
+
+    @Override
+    protected int getNavigationMenuItemId() {
+        return R.id.admin_nav_home;
     }
 }
