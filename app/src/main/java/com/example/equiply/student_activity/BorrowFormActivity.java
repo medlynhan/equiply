@@ -20,8 +20,10 @@ import com.example.equiply.helper.BorrowHistoryDA;
 import com.example.equiply.model.BorrowHistory;
 import com.google.android.material.textfield.TextInputEditText;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 public class BorrowFormActivity extends AppCompatActivity {
@@ -95,11 +97,33 @@ public class BorrowFormActivity extends AppCompatActivity {
         String returnDate = etReturnDate.getText().toString().trim();
         String reason = etReason.getText().toString().trim();
 
-        String requestAt = (new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()))
-                .format(Calendar.getInstance().getTime());
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+
+        String requestAt = sdf.format(Calendar.getInstance().getTime());
 
         if (borrowDate.isEmpty() || returnDate.isEmpty() || reason.isEmpty()) {
             Toast.makeText(this, "Semua field wajib diisi.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        try {
+            Date dateBorrow = sdf.parse(borrowDate);
+            Date dateReturn = sdf.parse(returnDate);
+            Date dateToday = sdf.parse(requestAt);
+
+            if (dateBorrow.before(dateToday)) {
+                Toast.makeText(this, "Tanggal pinjam tidak boleh di masa lalu.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (dateReturn.before(dateBorrow)) {
+                Toast.makeText(this, "Tanggal kembali tidak boleh sebelum tanggal pinjam.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Format tanggal salah. Gunakan dd/MM/yyyy", Toast.LENGTH_SHORT).show();
             return;
         }
 

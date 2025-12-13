@@ -76,8 +76,7 @@ public class ToolAdapter extends RecyclerView.Adapter<ToolAdapter.ToolViewHolder
         } else {
             String lowerCaseQuery = query.toLowerCase().trim();
             for (Tool tool : toolListFull) {
-                if (tool.getName().toLowerCase().contains(lowerCaseQuery) ||
-                        tool.getDescription().toLowerCase().contains(lowerCaseQuery)) {
+                if (tool.getName().toLowerCase().contains(lowerCaseQuery)) {
                     toolList.add(tool);
                 }
             }
