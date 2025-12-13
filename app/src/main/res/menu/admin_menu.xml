@@ -6,23 +6,21 @@
         android:title="Beranda"
         android:icon="@drawable/home_icon"/>
 
-    <!--    TODO: add icon-->
     <item
         android:id="@+id/admin_nav_tools"
         android:title="Alat"
         android:icon="@drawable/box_icon"/>
 
-    <!--    TODO: add icon-->
     <item
-        android:id="@+id/admin_nav_addTools"
-        android:title="Barang"
-        android:icon="@drawable/ic_img_placeholder" />
+        android:id="@+id/admin_add_item"
+        android:title="Tambah"
+        android:icon="@drawable/ic_item_circle"/>
 
     <!--    TODO: add icon-->
     <item
         android:id="@+id/admin_nav_report"
         android:title="Laporan"
-        android:icon="@drawable/ic_img_placeholder" />
+        android:icon="@drawable/ic_laporan" />
 
     <item
         android:id="@+id/admin_nav_profil"

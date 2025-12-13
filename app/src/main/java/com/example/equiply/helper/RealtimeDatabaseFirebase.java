@@ -26,6 +26,10 @@ public class RealtimeDatabaseFirebase {
         this.mDatabase = FirebaseDatabase.getInstance().getReference();
         this.cloudinaryHelper = new CloudinaryHelper(context);
     }
+    public DatabaseReference getReference(String path) {
+        // Since mDatabase is the root reference, we use .child(path)
+        return mDatabase.child(path);
+    }
 
     public void addNewUser(Context context,String uid, String name, String nim, String email){
         User newUser = new User(uid, name, nim, email);
@@ -156,4 +160,39 @@ public class RealtimeDatabaseFirebase {
                 }
         );
     }
+
+    public void getBorrowedToolsCount(CountCallback callback) {
+        mDatabase.child("tools").orderByChild("status").equalTo("Dipinjam")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        callback.onResult((int) snapshot.getChildrenCount());
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        callback.onResult(0);
+                    }
+                });
+    }
+
+    public void getBrokenToolsCount(CountCallback callback) {
+        mDatabase.child("tools").orderByChild("toolStatus").equalTo("Rusak")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        callback.onResult((int) snapshot.getChildrenCount());
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        callback.onResult(0);
+                    }
+                });
+    }
+    public interface CountCallback {
+        void onResult(int count);
+    }
+
+
 }

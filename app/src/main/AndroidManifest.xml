@@ -45,7 +45,7 @@
             android:name=".student_activity.HistoryDetailActivity"
             android:exported="false" />
         <activity
-            android:name=".student_activity.ProfileActivity"
+            android:name=".shared_activity.ProfileActivity"
             android:exported="false" />
         <activity
             android:name=".student_activity.HomeDashboardActivity"
@@ -65,6 +65,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".shared_activity.ChangePasswordActivity"
+            android:exported="false" />
+
     </application>
 
 </manifest>
