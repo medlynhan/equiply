@@ -18,6 +18,7 @@ import com.example.equiply.adapter.NotificationAdapter;
 import com.example.equiply.helper.NotificationDA;
 import com.example.equiply.helper.SessionManager;
 import com.example.equiply.model.Notification;
+import com.example.equiply.shared_activity.ProfileActivity;
 import com.example.equiply.shared_activity.ToolListActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 

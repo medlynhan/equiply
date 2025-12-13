@@ -278,7 +278,7 @@ public class ToolListActivity extends AppCompatActivity {
             IntentIntegrator intentIntegrator = new IntentIntegrator(this);
 
             intentIntegrator.setCaptureActivity(QRCodeScanner.class);
-            intentIntegrator.setPrompt("Scan a tool QR Code");
+            intentIntegrator.setPrompt(" ");
             intentIntegrator.setOrientationLocked(false);
             intentIntegrator.setBeepEnabled(false);
             intentIntegrator.initiateScan();
