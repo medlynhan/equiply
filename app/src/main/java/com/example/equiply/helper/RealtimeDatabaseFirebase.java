@@ -160,4 +160,39 @@ public class RealtimeDatabaseFirebase {
                 }
         );
     }
+
+    public void getBorrowedToolsCount(CountCallback callback) {
+        mDatabase.child("borrow_history")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        callback.onResult((int) snapshot.getChildrenCount());
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        callback.onResult(0);
+                    }
+                });
+    }
+
+    public void getBrokenToolsCount(CountCallback callback) {
+        mDatabase.child("broken_history")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        callback.onResult((int) snapshot.getChildrenCount());
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        callback.onResult(0);
+                    }
+                });
+    }
+    public interface CountCallback {
+        void onResult(int count);
+    }
+
+
 }

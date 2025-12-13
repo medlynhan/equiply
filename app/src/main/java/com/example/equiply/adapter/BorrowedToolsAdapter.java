@@ -1,7 +1,5 @@
 package com.example.equiply.adapter;
 
-import static com.example.equiply.R.id.ivStatusIcon;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,17 +9,18 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.equiply.R;
+import com.example.equiply.model.Tool;
 
 import java.util.ArrayList;
 
 public class BorrowedToolsAdapter extends RecyclerView.Adapter<BorrowedToolsAdapter.ViewHolder> {
 
-    private final ArrayList<String> list;
+    private final ArrayList<Tool> tools;
 
-
-    public BorrowedToolsAdapter(ArrayList<String> list) {
-        this.list = list;
+    public BorrowedToolsAdapter(ArrayList<Tool> tools) {
+        this.tools = tools;
     }
 
     @NonNull
@@ -34,27 +33,32 @@ public class BorrowedToolsAdapter extends RecyclerView.Adapter<BorrowedToolsAdap
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        String item = list.get(position);
+        Tool tool = tools.get(position);
 
-        holder.tvName.setText(item);
-        holder.tvStatus.setText("Borrowed");
+        holder.tvName.setText(tool.getName());
+        holder.tvStatus.setText("Dipinjam");
+
+        Glide.with(holder.itemView.getContext())
+                .load(tool.getImageUrl())
+                .placeholder(R.drawable.ic_img_placeholder)
+                .into(holder.ivTool);
     }
 
     @Override
     public int getItemCount() {
-        return list.size();
+        return tools.size();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        ImageView ivTool, ivStatusIcon;
+        ImageView ivTool;
         TextView tvName, tvStatus;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             ivTool = itemView.findViewById(R.id.ivToolImage);
             tvName = itemView.findViewById(R.id.tvToolName);
-            tvStatus = itemView.findViewById(R.id.ivStatusIcon);
+            tvStatus = itemView.findViewById(R.id.tvToolStatus);
         }
     }
 }

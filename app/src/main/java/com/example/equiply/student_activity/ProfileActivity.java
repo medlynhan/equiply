@@ -1,5 +1,6 @@
 package com.example.equiply.student_activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -17,6 +18,9 @@ import com.example.equiply.helper.AuthFirebase;
 import com.example.equiply.helper.RealtimeDatabaseFirebase;
 import com.example.equiply.model.User; // Import the User model
 import com.google.firebase.auth.FirebaseAuth;
+import com.example.equiply.shared_activity.ChangePasswordActivity;
+import android.content.Intent;
+
 
 public class ProfileActivity extends AppCompatActivity {
 
@@ -114,7 +118,7 @@ public class ProfileActivity extends AppCompatActivity {
                 textNim.setText(nim != null ? nim : "N/A");
             }
             // Use String resource for profile title (Good practice)
-            profileTitle.setText("Profile Mahasiswa");
+            profileTitle.setText("Profile");
 
         } else if (role != null && role.equalsIgnoreCase(ROLE_ADMIN)) {
             // Admin: Hide NIM fields
@@ -127,8 +131,11 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void handleChangePassword() {
-        Toast.makeText(this, "Navigating to Ubah Password screen...", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(ProfileActivity.this, ChangePasswordActivity.class);
+        startActivity(intent);
     }
+
+
 
     private void handleLogout() {
         auth.logout(ProfileActivity.this);

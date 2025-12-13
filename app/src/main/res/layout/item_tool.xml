@@ -13,7 +13,6 @@
         android:orientation="horizontal"
         android:padding="5dp">
 
-        <!-- TOOL IMAGE -->
         <ImageView
             android:id="@+id/ivToolImage"
             android:layout_width="65dp"
@@ -29,7 +28,6 @@
             android:layout_weight="1"
             android:orientation="vertical">
 
-            <!-- TOOL NAME -->
             <TextView
                 android:id="@+id/tvToolName"
                 android:layout_width="wrap_content"
@@ -38,9 +36,8 @@
                 android:textSize="15sp"
                 android:textStyle="bold" />
 
-            <!-- STATUS TEXT -->
             <TextView
-                android:id="@+id/ivStatusIcon"
+                android:id="@+id/tvToolStatus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -49,8 +46,6 @@
                 android:textSize="12sp" />
 
         </LinearLayout>
-
-        <!-- STATUS ICON -->
 
     </LinearLayout>
 

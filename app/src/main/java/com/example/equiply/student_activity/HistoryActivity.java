@@ -108,6 +108,29 @@ public class HistoryActivity extends AppCompatActivity {
             }
             return false;
         });
+        String type = getIntent().getStringExtra("HISTORY_TYPE");
+
+        if ("BROKEN".equals(type)) {
+            // tampilkan history alat rusak
+            loadBrokenHistory();
+        } else if ("BORROWED".equals(type)) {
+            // tampilkan history peminjaman
+            loadBorrowedHistory();
+        } else {
+            // default (misalnya buka history semua)
+            loadAllHistory();
+        }
+    }
+    private void loadBrokenHistory() {
+        // nanti ambil data alat rusak
+    }
+
+    private void loadBorrowedHistory() {
+        // nanti ambil data peminjaman
+    }
+
+    private void loadAllHistory() {
+        // fallback
     }
 
     private void updateBottomNavigationSelection() {
