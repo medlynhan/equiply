@@ -65,24 +65,31 @@ public class RealtimeDatabaseFirebase {
 
     }
 
-    public void addNewTools(Context context, Uri imageUri, String id, String name, String description) {
+    public void addNewTools(Context context, Uri imageUri, String id, String name, String description
+                , Consumer<String> onSuccess, Consumer<String> onError) {
+
         cloudinaryHelper.uploadImage(imageUri, imageUrl -> {
                     Toast.makeText(context, "Gambar berhasil diunggah, menyimpan data...", Toast.LENGTH_SHORT).show();
                     Tool newTool = new Tool(id, name, description, "Tersedia", imageUrl,"Baik");
 
-                    mDatabase.child("tools").child(id).setValue(newTool).addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            Toast.makeText(context, "Tool baru berhasil ditambahkan!", Toast.LENGTH_LONG).show();
+                    saveTool(newTool, success -> {
+                        if (success) {
+                            onSuccess.accept("Tool baru berhasil ditambahkan!");
                         } else {
-                            Toast.makeText(context, "Gagal menyimpan data tool ke database.", Toast.LENGTH_LONG).show();
+                            onError.accept("Gagal menyimpan data tool ke database.");
                         }
                     });
                 },
-
                 errorMessage -> {
-                    Toast.makeText(context, "Gagal: " + errorMessage, Toast.LENGTH_LONG).show();
+                    onError.accept("Gagal Menunggah Gambar...");
                 }
         );
+    }
+
+    private void saveTool(Tool newTool, Consumer<Boolean> callback) {
+        mDatabase.child("tools").child(newTool.getId()).setValue(newTool).addOnCompleteListener(task -> {
+            callback.accept(task.isSuccessful());
+        });
     }
 
     public void getAllTools(Consumer<ArrayList<Tool>> callback) {
