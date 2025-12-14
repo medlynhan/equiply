@@ -8,6 +8,7 @@ public class Tool {
     private String toolStatus;
     private String returnDate;
     private String imageUrl;
+    private String lastBorrower;
 
     public Tool() {}
 
@@ -18,6 +19,7 @@ public class Tool {
         this.status = status;
         this.imageUrl = imageUrl;
         this.toolStatus = toolStatus;
+        this.lastBorrower = "-";
     }
 
     public String getId() {
@@ -71,4 +73,8 @@ public class Tool {
     public String getReturnDate() { return returnDate; }
 
     public void setReturnDate(String returnDate) { this.returnDate = returnDate; }
+
+    public String getLastBorrower() { return lastBorrower; }
+
+    public void setLastBorrower(String lastBorrower) { this.lastBorrower = lastBorrower; }
 }

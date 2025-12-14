@@ -132,7 +132,6 @@
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/tilToolName"
-                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
@@ -140,6 +139,8 @@
                         app:boxCornerRadiusBottomStart="12dp"
                         app:boxCornerRadiusTopEnd="12dp"
                         app:boxCornerRadiusTopStart="12dp"
+                        app:hintTextColor="@color/blue_medium"
+                        app:boxStrokeColor="@color/blue_medium"
                         app:startIconDrawable="@android:drawable/ic_menu_info_details"
                         app:startIconTint="#519FC1">
 
@@ -175,6 +176,8 @@
                         app:boxCornerRadiusTopStart="12dp"
                         app:counterEnabled="true"
                         app:counterMaxLength="200"
+                        app:hintTextColor="@color/blue_medium"
+                        app:boxStrokeColor="@color/blue_medium"
                         app:startIconDrawable="@android:drawable/ic_menu_edit"
                         app:startIconTint="#519FC1">
 
@@ -212,6 +215,8 @@
                         app:boxCornerRadiusBottomStart="12dp"
                         app:boxCornerRadiusTopEnd="12dp"
                         app:boxCornerRadiusTopStart="12dp"
+                        app:hintTextColor="@color/blue_medium"
+                        app:boxStrokeColor="@color/blue_medium"
                         app:startIconDrawable="@android:drawable/ic_menu_agenda"
                         app:startIconTint="#519FC1">
 
@@ -245,6 +250,8 @@
                         app:boxCornerRadiusBottomStart="12dp"
                         app:boxCornerRadiusTopEnd="12dp"
                         app:boxCornerRadiusTopStart="12dp"
+                        app:hintTextColor="@color/blue_medium"
+                        app:boxStrokeColor="@color/blue_medium"
                         app:startIconDrawable="@android:drawable/ic_menu_preferences"
                         app:startIconTint="#519FC1">
 

@@ -95,71 +95,92 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:orientation="horizontal"
-                android:paddingStart="20dp"
-                android:paddingEnd="20dp"
-                android:layout_marginTop="-60dp">
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="10dp"
+                android:layout_marginTop="-70dp"
+                android:clipToPadding="false">
 
-                <LinearLayout
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardBorrowed"
                     android:layout_width="0dp"
-                    android:layout_height="115dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:background="@drawable/card_white_admin"
-                    android:padding="12dp">
+                    android:layout_marginEnd="8dp"
+                    app:cardCornerRadius="20dp"
+                    app:cardElevation="8dp"
+                    app:cardBackgroundColor="@android:color/white"
+                    app:strokeWidth="0dp">
 
-                    <TextView
-                        android:id="@+id/tvLabelBorrowed"
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Total Barang Dipinjam"
-                        android:textColor="#04456A"
-                        android:textSize="15sp"
-                        android:gravity="center" />
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:paddingVertical="20dp"
+                        android:paddingHorizontal="16dp">
 
-                    <TextView
-                        android:id="@+id/tvTotalBorrowed"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="0"
-                        android:textColor="#04456A"
-                        android:textSize="36sp"
-                        android:textStyle="bold" />
+                        <TextView
+                            android:id="@+id/tvTotalBorrowed"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textColor="#04456A"
+                            android:textSize="36sp"
+                            android:textStyle="bold"
+                            android:includeFontPadding="false"/>
 
-                </LinearLayout>
+                        <TextView
+                            android:id="@+id/tvLabelBorrowed"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Dipinjam"
+                            android:textColor="#757575"
+                            android:textSize="14sp"
+                            android:layout_marginTop="4dp"
+                            android:gravity="center"/>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
 
-                <View
-                    android:layout_width="18dp"
-                    android:layout_height="1dp" />
-
-                <LinearLayout
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardBroken"
                     android:layout_width="0dp"
-                    android:layout_height="115dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:background="@drawable/card_white_admin"
-                    android:padding="12dp">
+                    android:layout_marginStart="8dp"
+                    app:cardCornerRadius="20dp"
+                    app:cardElevation="8dp"
+                    app:cardBackgroundColor="@android:color/white"
+                    app:strokeWidth="0dp">
 
-                    <TextView
-                        android:id="@+id/tvLabelBroken"
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Total Alat Rusak"
-                        android:textColor="#04456A"
-                        android:textSize="15sp"
-                        android:gravity="center" />
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:paddingVertical="20dp"
+                        android:paddingHorizontal="16dp">
 
-                    <TextView
-                        android:id="@+id/tvTotalBroken"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="0"
-                        android:textColor="#04456A"
-                        android:textSize="36sp"
-                        android:textStyle="bold" />
+                        <TextView
+                            android:id="@+id/tvTotalBroken"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textColor="#D32F2F"
+                            android:textSize="36sp"
+                            android:textStyle="bold"
+                            android:includeFontPadding="false"/>
 
-                </LinearLayout>
+                        <TextView
+                            android:id="@+id/tvLabelBroken"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Rusak"
+                            android:textColor="#757575"
+                            android:textSize="14sp"
+                            android:layout_marginTop="4dp"
+                            android:gravity="center"/>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
 
             <LinearLayout
@@ -204,7 +225,7 @@
                     android:id="@+id/rvBrokenTools"
                     android:layout_width="match_parent"
                     android:layout_height="180dp"
-                    android:nestedScrollingEnabled="false"
+                    android:nestedScrollingEnabled="true"
                     android:layout_marginTop="14dp" />
             </LinearLayout>
 
@@ -248,7 +269,7 @@
                     android:id="@+id/rvBorrowedTools"
                     android:layout_width="match_parent"
                     android:layout_height="180dp"
-                    android:nestedScrollingEnabled="false"
+                    android:nestedScrollingEnabled="true"
                     android:layout_marginTop="12dp" />
             </LinearLayout>
 

@@ -134,26 +134,25 @@ public class BorrowHistoryDA {
         });
     }
 
-    public void approveRequest(String requestId, String toolId, Consumer<Boolean> callback) {
-        mDatabase.child("borrow_requests")
+    public void approveRequest(String requestId, String toolId, String borrowerName, Consumer<Boolean> callback) {
+        mDatabase.child("history")
                 .child(requestId)
                 .child("status")
-                .setValue("approved")
+                .setValue("Approved")
                 .addOnSuccessListener(unused -> {
 
-                    mDatabase.child("tools")
-                            .child(toolId)
-                            .child("status")
-                            .setValue("dipinjam")
-                            .addOnSuccessListener(unused2 -> callback.accept(true))
-                            .addOnFailureListener(e -> callback.accept(false));
+                    DatabaseReference toolRef = mDatabase.child("tools").child(toolId);
+                    toolRef.child("status").setValue("Dipinjam");
+                    toolRef.child("lastBorrower").setValue(borrowerName);
+
+                    callback.accept(true);
 
                 })
                 .addOnFailureListener(e -> callback.accept(false));
     }
 
     public void rejectRequest(String requestId, Consumer<Boolean> callback) {
-        mDatabase.child("borrow_requests")
+        mDatabase.child("history")
                 .child(requestId)
                 .child("status")
                 .setValue("rejected")

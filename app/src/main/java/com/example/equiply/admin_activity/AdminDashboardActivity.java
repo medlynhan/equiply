@@ -171,14 +171,25 @@ public class AdminDashboardActivity extends BaseNavigationActivity {
 
     private void setupBrokenToolsRecycler() {
         rvBrokenTools.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        brokenToolsAdapter = new BrokenToolsAdapter(brokenToolsList);
+        brokenToolsAdapter = new BrokenToolsAdapter(brokenToolsList, tool -> openToolDetail(tool));
         rvBrokenTools.setAdapter(brokenToolsAdapter);
     }
 
     private void setupBorrowedToolsRecycler() {
         rvBorrowedTools.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        borrowedToolsAdapter = new BorrowedToolsAdapter(borrowedToolsList);
+        borrowedToolsAdapter = new BorrowedToolsAdapter(borrowedToolsList, tool -> openToolDetail(tool));
         rvBorrowedTools.setAdapter(borrowedToolsAdapter);
+    }
+
+    private void openToolDetail(Tool tool) {
+        Intent intent = new Intent(this, AdminToolDetailActivity.class);
+        intent.putExtra("TOOL_ID", tool.getId());
+        intent.putExtra("TOOL_NAME", tool.getName());
+        intent.putExtra("TOOL_DESCRIPTION", tool.getDescription());
+        intent.putExtra("TOOL_STATUS", tool.getStatus());
+        intent.putExtra("TOOL_CONDITION", tool.getToolStatus());
+        intent.putExtra("TOOL_IMAGE_URL", tool.getImageUrl());
+        startActivity(intent);
     }
 
     @Override

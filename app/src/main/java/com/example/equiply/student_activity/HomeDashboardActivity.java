@@ -84,6 +84,12 @@ public class HomeDashboardActivity extends BaseNavigationActivity {
         setupQrScanner();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadStudentData();
+    }
+
     private void setupRecyclerView() {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         rvBorrowedItems.setLayoutManager(layoutManager);

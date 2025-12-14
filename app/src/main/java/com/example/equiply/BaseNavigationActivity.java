@@ -25,7 +25,7 @@ public abstract class BaseNavigationActivity extends AppCompatActivity {
     @Override
     public void setContentView(int layoutResID) {
         session = new SessionManager(this);
-        View fullView = getLayoutInflater().inflate(R.layout.activity_base_admin, null);
+        View fullView = getLayoutInflater().inflate(R.layout.activity_base_navigation, null);
         FrameLayout activityContainer = fullView.findViewById(R.id.activity_content_container);
 
         getLayoutInflater().inflate(layoutResID, activityContainer, true);
