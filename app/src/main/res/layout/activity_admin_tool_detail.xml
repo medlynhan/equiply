@@ -5,7 +5,6 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="28dp"
     android:background="#F5F7FA"
     tools:context=".admin_activity.AdminToolDetailActivity">
 

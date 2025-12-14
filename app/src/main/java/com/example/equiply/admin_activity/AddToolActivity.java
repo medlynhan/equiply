@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.equiply.R;
 import com.example.equiply.database.ToolsDA;
+import com.example.equiply.shared_activity.ToolListActivity;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
@@ -89,7 +90,9 @@ public class AddToolActivity extends AppCompatActivity {
             toolsDA.addNewTools(AddToolActivity.this, selectedImageUri, toolId, name, description,
                     successMsg -> {
                         Toast.makeText(this, successMsg, Toast.LENGTH_SHORT).show();
-                        finish();
+                        Intent intent = new Intent(this, ToolListActivity.class);
+                        startActivity(intent);
+                        overridePendingTransition(0, 0);
                     },
                     errorMsg -> {
                         setLoadingState(false);

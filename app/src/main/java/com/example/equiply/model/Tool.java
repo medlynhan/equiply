@@ -6,7 +6,7 @@ public class Tool {
     private String description;
     private String status;
     private String toolStatus;
-
+    private String returnDate;
     private String imageUrl;
 
     public Tool() {}
@@ -68,4 +68,7 @@ public class Tool {
         this.toolStatus = toolStatus;
     }
 
+    public String getReturnDate() { return returnDate; }
+
+    public void setReturnDate(String returnDate) { this.returnDate = returnDate; }
 }

@@ -36,7 +36,7 @@
                     android:paddingEnd="22dp"
                     android:paddingTop="60dp"
                     android:paddingBottom="22dp"
-                    >
+                    android:layout_marginTop="32dp">
 
                     <TextView
                         android:id="@+id/tvGreeting"

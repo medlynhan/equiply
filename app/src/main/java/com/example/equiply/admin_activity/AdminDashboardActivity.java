@@ -80,13 +80,19 @@ public class AdminDashboardActivity extends BaseNavigationActivity {
             startActivity(intent);
         });
 
-        // Load data dan setup Recycler
         loadAdminName();
         loadStatistics();
         setupBrokenToolsRecycler();
         setupBorrowedToolsRecycler();
         loadDashboardTools();
         startLiveClock();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadStatistics();
+        loadDashboardTools();
     }
 
     private void loadAdminName() {
