@@ -11,10 +11,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.equiply.BaseNavigationActivity;
 import com.example.equiply.R;
+import com.example.equiply.database.UserDA;
 import com.example.equiply.shared_activity.ToolListActivity;
 import com.example.equiply.adapter.BrokenToolsAdapter;
 import com.example.equiply.adapter.BorrowedToolsAdapter;
-import com.example.equiply.helper.RealtimeDatabaseFirebase;
+import com.example.equiply.database.ToolsDA;
 import com.google.firebase.auth.FirebaseAuth;
 import com.example.equiply.model.Tool;
 
@@ -25,8 +26,8 @@ import java.util.Date;
 import java.util.Locale;
 
 public class AdminDashboardActivity extends BaseNavigationActivity {
-    private RealtimeDatabaseFirebase db;
-
+    private ToolsDA toolsDA;
+    private UserDA userDA;
     // Header items
     private TextView tvAdminName, tvTime, tvDate;
 
@@ -52,7 +53,8 @@ public class AdminDashboardActivity extends BaseNavigationActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_admin_dashboard);
 
-        db = new RealtimeDatabaseFirebase(this);
+        toolsDA = new ToolsDA(this);
+        userDA = new UserDA();
 
         tvAdminName = findViewById(R.id.tvAdminName);
         tvTime = findViewById(R.id.tvTime);
@@ -94,7 +96,7 @@ public class AdminDashboardActivity extends BaseNavigationActivity {
 
         if (uid == null) return;
 
-        db.getUserByID(uid, user -> {
+        userDA.getUserByID(uid, user -> {
             if (user != null && user.getName() != null) {
                 tvAdminName.setText(user.getName());
             } else {
@@ -104,11 +106,11 @@ public class AdminDashboardActivity extends BaseNavigationActivity {
     }
 
     private void loadStatistics() {
-        db.getBorrowedToolsCount(count -> {
+        toolsDA.getBorrowedToolsCount(count -> {
             tvTotalBorrowed.setText(String.valueOf(count));
         });
 
-        db.getBrokenToolsCount(count -> {
+        toolsDA.getBrokenToolsCount(count -> {
             tvTotalBroken.setText(String.valueOf(count));
         });
     }
@@ -130,7 +132,7 @@ public class AdminDashboardActivity extends BaseNavigationActivity {
         });
     }
     private void loadDashboardTools() {
-        db.getAllTools(tools -> {
+        toolsDA.getAllTools(tools -> {
 
             if (tools == null || tools.isEmpty()) {
                 brokenToolsAdapter.notifyDataSetChanged();

@@ -3,8 +3,6 @@ package com.example.equiply.student_activity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -14,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.equiply.BaseNavigationActivity;
 import com.example.equiply.R;
 import com.example.equiply.adapter.HistoryAdapter;
-import com.example.equiply.helper.BorrowHistoryDA;
+import com.example.equiply.database.BorrowHistoryDA;
 import com.example.equiply.helper.SessionManager;
 import com.example.equiply.model.BorrowHistory;
 import com.google.android.material.chip.Chip;

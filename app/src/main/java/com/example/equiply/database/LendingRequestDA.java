@@ -1,10 +1,11 @@
-package com.example.equiply.helper;
+package com.example.equiply.database;
 
 import android.content.Context;
 import android.net.Uri;
 
 import androidx.annotation.NonNull;
 
+import com.example.equiply.helper.CloudinaryHelper;
 import com.example.equiply.model.LendingRequest;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;

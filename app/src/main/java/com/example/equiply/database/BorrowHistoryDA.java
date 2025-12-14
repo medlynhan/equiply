@@ -1,4 +1,4 @@
-package com.example.equiply.helper;
+package com.example.equiply.database;
 
 import androidx.annotation.NonNull;
 

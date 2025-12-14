@@ -44,6 +44,12 @@ public class HistoryDetailActivity extends AppCompatActivity {
         findViewById(R.id.fabBack).setOnClickListener(v -> finish());
     }
 
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(0, 0);
+    }
+
     private void initViews() {
         ivToolImage = findViewById(R.id.ivToolImage);
         tvToolName = findViewById(R.id.tvToolName);

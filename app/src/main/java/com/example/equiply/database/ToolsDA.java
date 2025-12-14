@@ -1,4 +1,4 @@
-package com.example.equiply.helper;
+package com.example.equiply.database;
 
 import android.content.Context;
 import android.net.Uri;
@@ -6,8 +6,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.example.equiply.helper.CloudinaryHelper;
 import com.example.equiply.model.Tool;
-import com.example.equiply.model.User;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -17,52 +17,17 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.function.Consumer;
 
-public class RealtimeDatabaseFirebase {
+public class ToolsDA {
 
     private final DatabaseReference mDatabase;
     private final CloudinaryHelper cloudinaryHelper;
 
-    public RealtimeDatabaseFirebase(Context context) {
+    public ToolsDA(Context context) {
         this.mDatabase = FirebaseDatabase.getInstance().getReference();
         this.cloudinaryHelper = new CloudinaryHelper(context);
     }
-    public DatabaseReference getReference(String path) {
-        // Since mDatabase is the root reference, we use .child(path)
-        return mDatabase.child(path);
-    }
-
-    public void addNewUser(Context context,String uid, String name, String nim, String email){
-        User newUser = new User(uid, name, nim, email);
-        newUser.setRole("student");
-        mDatabase.child("users").child(uid).setValue(newUser).addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                Toast.makeText(context, "Account created and User Data Saved", Toast.LENGTH_SHORT).show();
-
-            } else {
-                Toast.makeText(context, "Failed Saved User Data", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-    }
-
-    public void getUserByID(String id, Consumer<User> callback){
-        mDatabase.child("users").child(id).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(snapshot.exists()){
-                    User user =  snapshot.getValue(User.class);
-                    callback.accept(user);
-                }else{
-                    callback.accept(null);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                callback.accept(null);
-            }
-        });
-
+    public DatabaseReference getReference() {
+        return mDatabase.child("tools");
     }
 
     public void addNewTools(Context context, Uri imageUri, String id, String name, String description

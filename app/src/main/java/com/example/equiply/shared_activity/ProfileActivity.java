@@ -7,23 +7,17 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-
 import com.example.equiply.BaseNavigationActivity;
 import com.example.equiply.R;
+import com.example.equiply.database.UserDA;
 import com.example.equiply.helper.AuthFirebase;
-import com.example.equiply.helper.RealtimeDatabaseFirebase;
 import com.example.equiply.helper.SessionManager;
 
 
 public class ProfileActivity extends BaseNavigationActivity {
 
     private AuthFirebase auth;
-    private RealtimeDatabaseFirebase db;
+    private UserDA userDA;
     private SessionManager session;
     private View lineNim;
     private TextView textName, textRole, textEmail, labelNim, textNim, profileTitle;
@@ -39,8 +33,8 @@ public class ProfileActivity extends BaseNavigationActivity {
 
         setContentView(R.layout.activity_profile);
 
-        db = new RealtimeDatabaseFirebase(this);
-        auth = new AuthFirebase(this);
+        userDA = new UserDA();;
+        auth = new AuthFirebase();
 
         initializeViews();
         loadUserProfileData();
@@ -68,7 +62,7 @@ public class ProfileActivity extends BaseNavigationActivity {
         String uid = session.getUserId();
 
         if (uid != null) {
-            db.getUserByID(uid, user -> {
+            userDA.getUserByID(uid, user -> {
                 if (user != null) {
                     String name = user.getName();
                     String email = user.getEmail();
@@ -113,6 +107,7 @@ public class ProfileActivity extends BaseNavigationActivity {
     private void handleChangePassword() {
         Intent intent = new Intent(ProfileActivity.this, ChangePasswordActivity.class);
         startActivity(intent);
+        overridePendingTransition(0, 0);
     }
 
     private void handleLogout() {

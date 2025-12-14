@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -14,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.equiply.BaseNavigationActivity;
 import com.example.equiply.R;
 import com.example.equiply.adapter.NotificationAdapter;
-import com.example.equiply.helper.NotificationDA;
+import com.example.equiply.database.NotificationDA;
 import com.example.equiply.helper.SessionManager;
 import com.example.equiply.model.Notification;
 import java.util.List;

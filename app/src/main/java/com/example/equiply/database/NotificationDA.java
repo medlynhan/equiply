@@ -1,7 +1,6 @@
-package com.example.equiply.helper;
+package com.example.equiply.database;
 
 import android.content.Context;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 

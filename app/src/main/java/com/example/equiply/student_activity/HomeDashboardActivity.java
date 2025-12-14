@@ -12,7 +12,7 @@ import androidx.core.app.ActivityCompat;
 
 import com.example.equiply.BaseNavigationActivity;
 import com.example.equiply.R;
-import com.example.equiply.helper.NotificationDA;
+import com.example.equiply.database.NotificationDA;
 import com.example.equiply.helper.SessionManager;
 
 public class HomeDashboardActivity extends BaseNavigationActivity {

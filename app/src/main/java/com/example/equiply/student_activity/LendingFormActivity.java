@@ -23,7 +23,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.bumptech.glide.Glide;
 import com.example.equiply.R;
-import com.example.equiply.helper.LendingRequestDA;
+import com.example.equiply.database.LendingRequestDA;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -103,6 +103,12 @@ public class LendingFormActivity extends AppCompatActivity {
         cvPhotoUpload.setOnClickListener(v -> {
             pickImage.launch("image/*"); // buka gallery
         });
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(0, 0);
     }
 
     private void submitForm() {

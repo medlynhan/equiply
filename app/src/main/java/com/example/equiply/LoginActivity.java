@@ -41,7 +41,7 @@ public class LoginActivity extends AppCompatActivity {
             return insets;
         });
 
-        auth = new AuthFirebase(this);
+        auth = new AuthFirebase();
         emailET = findViewById(R.id.email);
         passwordET = findViewById(R.id.password);
 
@@ -60,7 +60,9 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(LoginActivity.this,  RegisterActivity.class);
+                overridePendingTransition(0, 0);
                 startActivity(intent);
+                finish();
             }
         });
 
@@ -105,6 +107,12 @@ public class LoginActivity extends AppCompatActivity {
 
         });
 
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(0, 0);
     }
 
     private void hideKeyboard(View v) {

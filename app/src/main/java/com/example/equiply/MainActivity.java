@@ -1,22 +1,17 @@
 package com.example.equiply;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.equiply.admin_activity.AdminDashboardActivity;
-import com.example.equiply.helper.RealtimeDatabaseFirebase;
+import com.example.equiply.database.UserDA;
 import com.example.equiply.helper.SessionManager;
 import com.example.equiply.student_activity.HomeDashboardActivity;
 import com.google.android.material.button.MaterialButton;
@@ -51,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                 startActivity(intent);
+                overridePendingTransition(0, 0);
             }
         });
 
@@ -59,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
                 startActivity(intent);
+                overridePendingTransition(0, 0);
             }
         });
 
@@ -87,10 +84,11 @@ public class MainActivity extends AppCompatActivity {
 
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
+            overridePendingTransition(0, 0);
             finish();
         } else {
             String uid = mAuth.getCurrentUser().getUid();
-            new RealtimeDatabaseFirebase(this).getUserByID(uid, user -> {
+            new UserDA().getUserByID(uid, user -> {
                 if (user != null) {
                     session.saveUserSession(user.getId(),
                             user.getRole(),

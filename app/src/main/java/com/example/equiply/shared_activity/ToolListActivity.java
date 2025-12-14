@@ -17,7 +17,7 @@ import com.example.equiply.R;
 import com.example.equiply.adapter.ToolAdapter;
 import com.example.equiply.admin_activity.AdminToolDetailActivity;
 import com.example.equiply.helper.QRCodeScanner;
-import com.example.equiply.helper.RealtimeDatabaseFirebase;
+import com.example.equiply.database.ToolsDA;
 import com.example.equiply.helper.SessionManager;
 import com.example.equiply.model.Tool;
 import com.example.equiply.student_activity.ToolDetailActivity;
@@ -32,7 +32,7 @@ import java.util.ArrayList;
 public class ToolListActivity extends BaseNavigationActivity {
     private RecyclerView rvTools;
     private ToolAdapter toolAdapter;
-    private RealtimeDatabaseFirebase database;
+    private ToolsDA toolsDA;
     private EditText etSearch;
     private ChipGroup chipGroupFilters;
     private Chip chipAll;
@@ -49,7 +49,7 @@ public class ToolListActivity extends BaseNavigationActivity {
         setContentView(R.layout.activity_tool_list);
 
         initializeViews();
-        database = new RealtimeDatabaseFirebase(this);
+        toolsDA = new ToolsDA(this);
         SessionManager session = new SessionManager(this);
 
         isAdmin = session.isAdmin();
@@ -104,7 +104,7 @@ public class ToolListActivity extends BaseNavigationActivity {
     }
 
     private void loadTools() {
-        database.getAllTools(tools -> {
+        toolsDA.getAllTools(tools -> {
             if (tools != null && !tools.isEmpty()) {
                 toolList.clear();
                 toolListFull.clear();
@@ -219,7 +219,7 @@ public class ToolListActivity extends BaseNavigationActivity {
                     return;
                 }
 
-                database.getToolById(toolId, tool -> {
+                toolsDA.getToolById(toolId, tool -> {
                     if (tool != null) {
                         openToolDetail(tool);
                     } else {
@@ -248,5 +248,6 @@ public class ToolListActivity extends BaseNavigationActivity {
             intent.putExtra("TOOL_NAME", tool.getName());
         }
         startActivity(intent);
+        overridePendingTransition(0, 0);
     }
 }

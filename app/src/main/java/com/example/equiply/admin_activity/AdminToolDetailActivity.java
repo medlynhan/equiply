@@ -12,7 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.example.equiply.R;
-import com.example.equiply.helper.RealtimeDatabaseFirebase;
+import com.example.equiply.database.ToolsDA;
 import com.example.equiply.model.Tool;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
@@ -26,7 +26,7 @@ public class AdminToolDetailActivity extends AppCompatActivity {
     private MaterialButton btnEdit, btnDelete;
     private FloatingActionButton fabBack;
 
-    private RealtimeDatabaseFirebase db;
+    private ToolsDA toolsDA;
 
     private String toolId;
     private String toolName;
@@ -41,11 +41,17 @@ public class AdminToolDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_admin_tool_detail);
 
         initializeViews();
-        db = new RealtimeDatabaseFirebase(this);
+        toolsDA = new ToolsDA(this);
 
         getIntentData();
         displayToolData();
         setupButtons();
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(0, 0);
     }
 
     private void initializeViews() {
@@ -141,7 +147,7 @@ public class AdminToolDetailActivity extends AppCompatActivity {
     }
 
     private void deleteTool() {
-        db.deleteTool(toolId, success -> {
+        toolsDA.deleteTool(toolId, success -> {
              if (success) {
                  Toast.makeText(this, "Alat berhasil dihapus", Toast.LENGTH_SHORT).show();
                  finish();
@@ -181,7 +187,7 @@ public class AdminToolDetailActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         if (toolId != null) {
-            db.getToolById(toolId, this::updateToolUI);
+            toolsDA.getToolById(toolId, this::updateToolUI);
         }
     }
 }

@@ -20,7 +20,7 @@ import com.google.firebase.auth.FirebaseUser;
 public class ChangePasswordActivity extends AppCompatActivity {
 
     private TextInputEditText etCurrentPassword, etNewPassword, etConfirmPassword;
-    private MaterialButton btnSavePassword;
+    private MaterialButton btnSavePassword, btnCancel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,8 +31,16 @@ public class ChangePasswordActivity extends AppCompatActivity {
         etNewPassword = findViewById(R.id.etNewPassword);
         etConfirmPassword = findViewById(R.id.etConfirmPassword);
         btnSavePassword = findViewById(R.id.btnSavePassword);
+        btnCancel = findViewById(R.id.btnCancel);
 
         btnSavePassword.setOnClickListener(v -> updatePassword());
+        btnCancel.setOnClickListener(v -> finish());
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(0, 0);
     }
 
     private void updatePassword() {

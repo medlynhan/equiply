@@ -14,7 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.example.equiply.R;
-import com.example.equiply.helper.RealtimeDatabaseFirebase;
+import com.example.equiply.database.ToolsDA;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
@@ -27,7 +27,7 @@ public class EditToolActivity extends AppCompatActivity {
     private MaterialButton btnSave, btnChangeImage;
     private FloatingActionButton fabBack;
 
-    private RealtimeDatabaseFirebase db;
+    private ToolsDA toolsDA;
     private ActivityResultLauncher<Intent> imagePickerLauncher;
     private String toolId;
     private String currentImageUrl;
@@ -43,11 +43,17 @@ public class EditToolActivity extends AppCompatActivity {
 
         initializeViews();
         setupImagePicker();
-        db = new RealtimeDatabaseFirebase(this);
+        toolsDA = new ToolsDA(this);
 
         loadToolData();
         setupDropdowns();
         setupButtons();
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(0, 0);
     }
 
     private void initializeViews() {
@@ -164,7 +170,7 @@ public class EditToolActivity extends AppCompatActivity {
     }
 
     private void updateToolWithNewImage(String name, String description, String status, String condition) {
-        db.updateToolWithNewImage(this, toolId, newImageUri, name, description, status, condition,
+        toolsDA.updateToolWithNewImage(this, toolId, newImageUri, name, description, status, condition,
                 imageUrl -> {
                     Toast.makeText(this, "Alat berhasil diperbarui", Toast.LENGTH_SHORT).show();
                     finish();
@@ -178,7 +184,7 @@ public class EditToolActivity extends AppCompatActivity {
     }
 
     private void updateTool(String name, String description, String status, String condition, String imageUrl) {
-        db.updateTool(toolId, name, description, status, condition, imageUrl, success -> {
+        toolsDA.updateTool(toolId, name, description, status, condition, imageUrl, success -> {
             if (success) {
                 Toast.makeText(this, "Alat berhasil diperbarui", Toast.LENGTH_SHORT).show();
                 finish();

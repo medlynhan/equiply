@@ -12,8 +12,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.bumptech.glide.Glide;
 import com.example.equiply.R;
 import com.example.equiply.helper.AuthFirebase;
-import com.example.equiply.helper.BorrowHistoryDA;
-import com.example.equiply.helper.RealtimeDatabaseFirebase;
+import com.example.equiply.database.BorrowHistoryDA;
+import com.example.equiply.database.ToolsDA;
 import com.example.equiply.model.Tool;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
@@ -28,7 +28,7 @@ public class ToolDetailActivity extends AppCompatActivity {
     private String userId;
     private AuthFirebase auth;
     private BorrowHistoryDA borrowHistoryDA;
-    private RealtimeDatabaseFirebase db;
+    private ToolsDA toolsDA;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,8 +46,8 @@ public class ToolDetailActivity extends AppCompatActivity {
         statusBadge = findViewById(R.id.statusBadge);
 
         borrowHistoryDA = new BorrowHistoryDA();
-        db = new RealtimeDatabaseFirebase(this);
-        auth = new AuthFirebase(this);
+        toolsDA = new ToolsDA(this);
+        auth = new AuthFirebase();
 
         String toolId = getIntent().getStringExtra("TOOL_ID");
 
@@ -58,8 +58,14 @@ public class ToolDetailActivity extends AppCompatActivity {
         findViewById(R.id.fabBack).setOnClickListener(v -> finish());
     }
 
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(0, 0);
+    }
+
     private void loadToolDetail(String toolId) {
-        db.getToolById(toolId, tool -> {
+        toolsDA.getToolById(toolId, tool -> {
             if (tool != null) {
                 showToolData(tool);
             }
@@ -108,6 +114,7 @@ public class ToolDetailActivity extends AppCompatActivity {
                     intent.putExtra("TOOL_PICTURE", tool.getImageUrl());
                     intent.putExtra("TOOL_STATUS", tool.getToolStatus());
                     intent.putExtra("USER_ID", userId);
+                    overridePendingTransition(0, 0);
                     startActivity(intent);
                 });
             }

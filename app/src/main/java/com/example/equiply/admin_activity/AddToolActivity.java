@@ -3,19 +3,14 @@ package com.example.equiply.admin_activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.example.equiply.R;
-import com.example.equiply.helper.RealtimeDatabaseFirebase;
+import com.example.equiply.database.ToolsDA;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
@@ -28,7 +23,7 @@ public class AddToolActivity extends AppCompatActivity {
     private MaterialButton uploadPicture, saveToolBtn;
     private ImageView previewImage;
     private TextInputEditText toolNameET, toolDescET;
-    private RealtimeDatabaseFirebase db;
+    private ToolsDA toolsDA;
     private Uri selectedImageUri;
 
     @Override
@@ -36,7 +31,7 @@ public class AddToolActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_tool);
 
-        db = new RealtimeDatabaseFirebase(this);
+        toolsDA = new ToolsDA(this);
         fabBack = findViewById(R.id.fabBack);
         uploadPicture = findViewById(R.id.uploadPicture);
         saveToolBtn = findViewById(R.id.saveToolBtn);
@@ -47,6 +42,12 @@ public class AddToolActivity extends AppCompatActivity {
         fabBack.setOnClickListener(v -> finish());
         uploadPicture.setOnClickListener(v -> openFileChooser());
         saveToolBtn.setOnClickListener(v -> saveTool());
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(0, 0);
     }
 
     private void openFileChooser() {
@@ -85,7 +86,7 @@ public class AddToolActivity extends AppCompatActivity {
         String toolId = FirebaseDatabase.getInstance().getReference("tools").push().getKey();
 
         if (toolId != null) {
-            db.addNewTools(AddToolActivity.this, selectedImageUri, toolId, name, description,
+            toolsDA.addNewTools(AddToolActivity.this, selectedImageUri, toolId, name, description,
                     successMsg -> {
                         Toast.makeText(this, successMsg, Toast.LENGTH_SHORT).show();
                         finish();

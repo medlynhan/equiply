@@ -40,7 +40,7 @@ public class RegisterActivity extends AppCompatActivity {
             return insets;
         });
 
-        auth = new AuthFirebase(this);
+        auth = new AuthFirebase();
         nameET  = findViewById(R.id.name);
         NIMET = findViewById(R.id.NIM);
         emailET = findViewById(R.id.email);
@@ -64,7 +64,9 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(RegisterActivity.this,  LoginActivity.class);
+                overridePendingTransition(0, 0);
                 startActivity(intent);
+                finish();
             }
         });
 
@@ -146,6 +148,12 @@ public class RegisterActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(0, 0);
     }
 
     private void hideKeyboard(View v) {

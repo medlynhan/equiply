@@ -1,5 +1,6 @@
 package com.example.equiply.adapter;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.Context;
 import android.graphics.Color;
@@ -87,6 +88,9 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
             intent.putExtra("REASON", borrowHistory.getReason());
 
             context.startActivity(intent);
+            if (context instanceof Activity) {
+                ((Activity) context).overridePendingTransition(0, 0);
+            }
         });
     }
 
