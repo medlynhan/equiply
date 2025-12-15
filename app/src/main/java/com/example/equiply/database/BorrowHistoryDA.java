@@ -21,7 +21,16 @@ public class BorrowHistoryDA {
     }
 
     public void addBorrowHistory(BorrowHistory borrowHistory, Consumer<Boolean> callback){
-        mDatabase.child("history").push().setValue(borrowHistory).addOnCompleteListener(task -> {
+        String historyId = mDatabase.child("history").push().getKey();
+
+        if (historyId == null) {
+            callback.accept(false);
+            return;
+        }
+
+        borrowHistory.setId(historyId);
+
+        mDatabase.child("history").child(historyId).setValue(borrowHistory).addOnCompleteListener(task -> {
             callback.accept(task.isSuccessful());
         });
 
@@ -87,7 +96,7 @@ public class BorrowHistoryDA {
     public void getAllPendingRequests(Consumer<ArrayList<BorrowHistory>> callback) {
         mDatabase.child("history")
                 .orderByChild("status")
-                .equalTo("pending")
+                .equalTo("Pending")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -134,6 +143,32 @@ public class BorrowHistoryDA {
         });
     }
 
+    public void updateHistoryStatusToReturned(String userId, String toolId) {
+        mDatabase.child("history")
+                .orderByChild("userId")
+                .equalTo(userId)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot data : snapshot.getChildren()) {
+                            String currentToolId = data.child("toolId").getValue(String.class);
+                            String currentStatus = data.child("status").getValue(String.class);
+
+                            if (toolId.equals(currentToolId) &&
+                                    (currentStatus.equalsIgnoreCase("pending_return") ||
+                                            currentStatus.equalsIgnoreCase("Approved") ||
+                                            currentStatus.equalsIgnoreCase("Dipinjam"))) {
+                                data.getRef().child("status").setValue("Returned");
+
+                                data.getRef().child("actualReturnDate").setValue(System.currentTimeMillis());
+                            }
+                        }
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {}
+                });
+    }
+
     public void approveRequest(String requestId, String toolId, String borrowerName, Consumer<Boolean> callback) {
         mDatabase.child("history")
                 .child(requestId)
@@ -155,7 +190,7 @@ public class BorrowHistoryDA {
         mDatabase.child("history")
                 .child(requestId)
                 .child("status")
-                .setValue("rejected")
+                .setValue("Rejected")
                 .addOnSuccessListener(unused -> callback.accept(true))
                 .addOnFailureListener(e -> callback.accept(false));
     }

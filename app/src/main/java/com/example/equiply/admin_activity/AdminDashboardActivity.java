@@ -16,6 +16,7 @@ import com.example.equiply.shared_activity.ToolListActivity;
 import com.example.equiply.adapter.BrokenToolsAdapter;
 import com.example.equiply.adapter.BorrowedToolsAdapter;
 import com.example.equiply.database.ToolsDA;
+import com.google.android.material.card.MaterialCardView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.example.equiply.model.Tool;
 
@@ -30,6 +31,8 @@ public class AdminDashboardActivity extends BaseNavigationActivity {
     private UserDA userDA;
     // Header items
     private TextView tvAdminName, tvTime, tvDate;
+
+    private MaterialCardView btnApproval;
 
     // Stat cards
     private TextView tvTotalBorrowed, tvTotalBroken;
@@ -59,6 +62,13 @@ public class AdminDashboardActivity extends BaseNavigationActivity {
         tvAdminName = findViewById(R.id.tvAdminName);
         tvTime = findViewById(R.id.tvTime);
         tvDate = findViewById(R.id.tvDate);
+        btnApproval = findViewById(R.id.btnApproval);
+
+        btnApproval.setOnClickListener(v -> {
+            Intent intent = new Intent(this, AdminApprovalActivity.class);
+            startActivity(intent);
+            overridePendingTransition(0, 0);
+        });
 
         tvTotalBorrowed = findViewById(R.id.tvTotalBorrowed);
         tvTotalBroken = findViewById(R.id.tvTotalBroken);
@@ -72,12 +82,14 @@ public class AdminDashboardActivity extends BaseNavigationActivity {
             Intent intent = new Intent(AdminDashboardActivity.this, ToolListActivity.class);
             intent.putExtra("OPEN_FILTER", "RUSAK");
             startActivity(intent);
+            overridePendingTransition(0, 0);
         });
 
         tvSeeAllBorrowed.setOnClickListener(v -> {
             Intent intent = new Intent(AdminDashboardActivity.this, ToolListActivity.class);
             intent.putExtra("FILTER_MODE", "BORROWED");
             startActivity(intent);
+            overridePendingTransition(0, 0);
         });
 
         loadAdminName();

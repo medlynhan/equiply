@@ -141,25 +141,28 @@ public class LendingRequestDA {
                 });
     }
 
-    public void approveReturn(String requestId, String toolId, Consumer<Boolean> callback) {
+    public void approveReturn(String requestId, String toolId, String condition, Consumer<Boolean> callback) {
         mDatabase.child("return_requests")
                 .child(requestId)
                 .child("status")
                 .setValue("approved")
                 .addOnSuccessListener(unused -> {
-                    // update Tool status
-                    mDatabase.child("tools")
-                            .child(toolId)
-                            .child("status")
-                            .setValue("Tersedia")
-                            .addOnSuccessListener(unused2 -> callback.accept(true))
-                            .addOnFailureListener(e -> callback.accept(false));
+                    DatabaseReference toolRef = mDatabase.child("tools").child(toolId);
+                    toolRef.child("status").setValue("Tersedia");
+                    toolRef.child("toolStatus").setValue(condition);
+
+                    callback.accept(true);
                 })
                 .addOnFailureListener(e -> callback.accept(false));
     }
 
     // not final
     public void rejectReturn(String requestId, Consumer<Boolean> callback) {
-
+        mDatabase.child("return_requests")
+                .child(requestId)
+                .child("status")
+                .setValue("rejected")
+                .addOnSuccessListener(unused -> callback.accept(true))
+                .addOnFailureListener(e -> callback.accept(false));
     }
 }

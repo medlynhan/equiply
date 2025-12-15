@@ -89,6 +89,66 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </FrameLayout>
 
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/btnApproval"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="-40dp"
+                android:layout_marginBottom="20dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="8dp"
+                app:cardBackgroundColor="@color/white_modif"
+                app:strokeWidth="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="16dp"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/notification_icon"
+                        app:tint="#FF9800"
+                        android:background="@drawable/circle_blue"
+                        android:backgroundTint="#FFF3E0"
+                        android:padding="8dp"/>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="16dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Permintaan Masuk"
+                            android:textColor="@color/black_modif"
+                            android:textStyle="bold"
+                            android:textSize="16sp"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Kelola peminjaman &amp; pengembalian"
+                            android:textColor="#757575"
+                            android:textSize="12sp"/>
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_back"
+                        android:rotation="180"
+                        app:tint="#BDBDBD"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
             <LinearLayout
                 android:id="@+id/statCardsContainer"
                 android:layout_width="match_parent"
@@ -97,7 +157,7 @@
                 android:orientation="horizontal"
                 android:paddingHorizontal="20dp"
                 android:paddingVertical="10dp"
-                android:layout_marginTop="-70dp"
+                android:layout_marginTop="-10dp"
                 android:clipToPadding="false">
 
                 <com.google.android.material.card.MaterialCardView

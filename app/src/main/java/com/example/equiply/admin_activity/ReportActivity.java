@@ -64,9 +64,7 @@ public class ReportActivity extends BaseNavigationActivity {
     }
 
     private void setupChart(){
-        pieChart.setUsePercentValues(false);
         pieChart.getDescription().setEnabled(false);
-        pieChart.setExtraOffsets(5, 10, 5, 5);
 
         pieChart.setDragDecelerationFrictionCoef(0.95f);
         pieChart.setDrawHoleEnabled(true);

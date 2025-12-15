@@ -1,6 +1,5 @@
 package com.example.equiply.student_activity;
 
-import android.graphics.Insets;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -18,6 +17,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
@@ -49,9 +49,8 @@ public class LendingFormActivity extends AppCompatActivity {
             uri -> {
                 if (uri != null) {
                     proofPhotoUri = uri;
-                    // Update UI: Hide placeholder, show image
                     ivPhotoPreview.setImageURI(uri);
-                    ivPhotoPreview.setAlpha(1.0f); // Remove transparency
+                    ivPhotoPreview.setAlpha(1.0f);
                     llPhotoPlaceholder.setVisibility(View.GONE);
                 }
             }
@@ -64,7 +63,7 @@ public class LendingFormActivity extends AppCompatActivity {
         setContentView(R.layout.activity_lending_form);
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars()).toPlatformInsets();
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
@@ -101,7 +100,7 @@ public class LendingFormActivity extends AppCompatActivity {
         findViewById(R.id.fabBack).setOnClickListener(v -> finish());
         // photo upload button
         cvPhotoUpload.setOnClickListener(v -> {
-            pickImage.launch("image/*"); // buka gallery
+            pickImage.launch("image/*");
         });
     }
 
@@ -130,6 +129,9 @@ public class LendingFormActivity extends AppCompatActivity {
             return;
         }
 
+        btnSubmitReturn.setEnabled(false);
+        btnSubmitReturn.setText("Memproses...");
+
         String returnDate = new SimpleDateFormat("d/M/yyyy", Locale.getDefault()).format(new Date());
 
         lendingRequestDA.addNewRequest(
@@ -145,6 +147,8 @@ public class LendingFormActivity extends AppCompatActivity {
                         finish();
                     } else {
                         Toast.makeText(this, "Gagal mengajukan pengembalian!", Toast.LENGTH_LONG).show();
+                        btnSubmitReturn.setEnabled(true);
+                        btnSubmitReturn.setText("Ajukan Pengembalian");
                     }
                 }
         );
