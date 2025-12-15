@@ -244,6 +244,17 @@
                     android:nestedScrollingEnabled="false"
                     android:padding="8dp"
                     tools:listitem="@layout/item_tool"/>
+
+                <TextView
+                    android:id="@+id/tvEmptyBorrowed"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Belum ada riwayat peminjaman"
+                    android:gravity="center"
+                    android:layout_marginTop="100dp"
+                    android:textSize="16sp"
+                    android:textColor="#9E9E9E"
+                    android:visibility="gone"/>
             </com.google.android.material.card.MaterialCardView>
 
             <TextView
@@ -272,6 +283,18 @@
                     android:nestedScrollingEnabled="false"
                     android:padding="8dp"
                     tools:listitem="@layout/item_tool"/>
+
+                <TextView
+                    android:id="@+id/tvEmptyBroken"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Belum ada riwayat peminjaman"
+                    android:gravity="center"
+                    android:layout_marginTop="100dp"
+                    android:textSize="16sp"
+                    android:textColor="#9E9E9E"
+                    android:visibility="gone"/>
+
             </com.google.android.material.card.MaterialCardView>
 
         </LinearLayout>

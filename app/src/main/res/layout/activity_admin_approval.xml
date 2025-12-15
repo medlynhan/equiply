@@ -37,6 +37,17 @@
                 android:layout_marginBottom="24dp"/>
 
             <TextView
+                android:id="@+id/tvEmptyBorrow"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Belum ada riwayat peminjaman"
+                android:gravity="center"
+                android:layout_marginTop="100dp"
+                android:textSize="16sp"
+                android:textColor="#9E9E9E"
+                android:visibility="gone"/>
+
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Verifikasi Pengembalian"
@@ -51,6 +62,17 @@
                 android:layout_height="wrap_content"
                 android:nestedScrollingEnabled="false"
                 tools:listitem="@layout/item_notification"/>
+
+            <TextView
+                android:id="@+id/tvEmptyReturn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Belum ada riwayat peminjaman"
+                android:gravity="center"
+                android:layout_marginTop="100dp"
+                android:textSize="16sp"
+                android:textColor="#9E9E9E"
+                android:visibility="gone"/>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

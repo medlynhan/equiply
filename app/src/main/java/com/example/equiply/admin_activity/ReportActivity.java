@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +32,7 @@ public class ReportActivity extends BaseNavigationActivity {
     private ToolsDA toolsDA;
     private TextView tvTotalTools, tvAvailableTools, tvBorrowedTools, tvBrokenTools;
     private RecyclerView rvBrokenReport, rvBorrowedReport;
+    private TextView tvEmptyBorrowed, tvEmptyBroken;
     private TextInputEditText etSearchReport;
     private PieChart pieChart;
     private BrokenToolsAdapter brokenToolsAdapter;
@@ -59,6 +61,8 @@ public class ReportActivity extends BaseNavigationActivity {
         tvBrokenTools = findViewById(R.id.tvBrokenTools);
         rvBrokenReport = findViewById(R.id.rvBrokenReport);
         rvBorrowedReport = findViewById(R.id.rvBorrowedReport);
+        tvEmptyBroken = findViewById(R.id.tvEmptyBroken);
+        tvEmptyBorrowed = findViewById(R.id.tvEmptyBorrowed);
         pieChart = findViewById(R.id.pieChart);
         etSearchReport = findViewById(R.id.etSearchReport);
     }
@@ -152,6 +156,22 @@ public class ReportActivity extends BaseNavigationActivity {
                     }
                 }
 
+                if (tempBroken.isEmpty()) {
+                    rvBrokenReport.setVisibility(View.GONE);
+                    tvEmptyBroken.setVisibility(View.VISIBLE);
+                } else {
+                    rvBrokenReport.setVisibility(View.VISIBLE);
+                    tvEmptyBroken.setVisibility(View.GONE);
+                }
+
+                if (tempBorrowed.isEmpty()) {
+                    rvBorrowedReport.setVisibility(View.GONE);
+                    tvEmptyBorrowed.setVisibility(View.VISIBLE);
+                } else {
+                    rvBorrowedReport.setVisibility(View.VISIBLE);
+                    tvEmptyBorrowed.setVisibility(View.GONE);
+                }
+
                 tvTotalTools.setText(String.valueOf(total));
                 tvAvailableTools.setText(String.valueOf(available));
                 tvBorrowedTools.setText(String.valueOf(borrowed));
@@ -162,7 +182,10 @@ public class ReportActivity extends BaseNavigationActivity {
 
                 updatePieChartData(available, borrowed, broken);
             } else {
-                Toast.makeText(this, "Gagal memuat data laporan.", Toast.LENGTH_SHORT).show();
+                rvBrokenReport.setVisibility(View.GONE);
+                tvEmptyBroken.setVisibility(View.VISIBLE);
+                rvBorrowedReport.setVisibility(View.GONE);
+                tvEmptyBorrowed.setVisibility(View.VISIBLE);
             }
         });
     }

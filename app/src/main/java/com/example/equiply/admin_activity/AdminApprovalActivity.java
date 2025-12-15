@@ -31,6 +31,7 @@ import com.google.android.material.button.MaterialButton;
 
 public class AdminApprovalActivity extends AppCompatActivity {
     private RecyclerView rvBorrow, rvReturn;
+    private TextView tvEmptyBorrow, tvEmptyReturn;
     private BorrowHistoryDA borrowHistoryDA;
     private LendingRequestDA lendingRequestDA;
     private UserDA userDA;
@@ -53,6 +54,9 @@ public class AdminApprovalActivity extends AppCompatActivity {
         rvBorrow = findViewById(R.id.rvBorrowRequests);
         rvReturn = findViewById(R.id.rvReturnRequests);
 
+        tvEmptyBorrow = findViewById(R.id.tvEmptyBorrow);
+        tvEmptyReturn = findViewById(R.id.tvEmptyReturn);
+
         rvBorrow.setLayoutManager(new LinearLayoutManager(this));
         rvReturn.setLayoutManager(new LinearLayoutManager(this));
 
@@ -62,6 +66,15 @@ public class AdminApprovalActivity extends AppCompatActivity {
 
     private void loadBorrowRequests() {
         borrowHistoryDA.getAllPendingRequests(list -> {
+            if (list.isEmpty()) {
+                tvEmptyBorrow.setVisibility(View.VISIBLE);
+                rvBorrow.setVisibility(View.GONE);
+                return;
+            } else {
+                tvEmptyBorrow.setVisibility(View.GONE);
+                rvBorrow.setVisibility(View.VISIBLE);
+            }
+
             BorrowRequestsAdapter adapter = new BorrowRequestsAdapter(list, new BorrowRequestsAdapter.ApprovalActionListener() {
                 @Override
                 public void onApprove(BorrowHistory item) {
@@ -128,6 +141,14 @@ public class AdminApprovalActivity extends AppCompatActivity {
 
     private void loadReturnRequests() {
         lendingRequestDA.getAllPendingReturnRequests(list -> {
+            if (list.isEmpty()) {
+                tvEmptyReturn.setVisibility(View.VISIBLE);
+                rvReturn.setVisibility(View.GONE);
+                return;
+            } else {
+                tvEmptyReturn.setVisibility(View.GONE);
+                rvReturn.setVisibility(View.VISIBLE);
+            }
             ReturnRequestsAdapter adapter = new ReturnRequestsAdapter(list, item -> {
                 showCustomReturnDialog(item);
             });

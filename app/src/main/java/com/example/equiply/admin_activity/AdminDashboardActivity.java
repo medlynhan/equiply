@@ -3,6 +3,7 @@ package com.example.equiply.admin_activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.View;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -40,11 +41,13 @@ public class AdminDashboardActivity extends BaseNavigationActivity {
 
     // RecyclerView BROKEN TOOLS
     private RecyclerView rvBrokenTools;
+    private TextView tvEmptyBroken;
     private BrokenToolsAdapter brokenToolsAdapter;
     private final ArrayList<Tool> brokenToolsList = new ArrayList<>();
 
     // RecyclerView BORROWED TOOLS
     private RecyclerView rvBorrowedTools;
+    private TextView tvEmptyBorrowed;
     private BorrowedToolsAdapter borrowedToolsAdapter;
     private final ArrayList<Tool> borrowedToolsList = new ArrayList<>();
 
@@ -72,6 +75,9 @@ public class AdminDashboardActivity extends BaseNavigationActivity {
 
         tvTotalBorrowed = findViewById(R.id.tvTotalBorrowed);
         tvTotalBroken = findViewById(R.id.tvTotalBroken);
+
+        tvEmptyBroken = findViewById(R.id.tvEmptyBroken);
+        tvEmptyBorrowed = findViewById(R.id.tvEmptyBorrowed);
 
         rvBrokenTools = findViewById(R.id.rvBrokenTools);
         rvBorrowedTools = findViewById(R.id.rvBorrowedTools);
@@ -153,8 +159,10 @@ public class AdminDashboardActivity extends BaseNavigationActivity {
         toolsDA.getAllTools(tools -> {
 
             if (tools == null || tools.isEmpty()) {
-                brokenToolsAdapter.notifyDataSetChanged();
-                borrowedToolsAdapter.notifyDataSetChanged();
+                rvBrokenTools.setVisibility(View.GONE);
+                tvEmptyBroken.setVisibility(View.VISIBLE);
+                rvBorrowedTools.setVisibility(View.GONE);
+                tvEmptyBorrowed.setVisibility(View.VISIBLE);
                 return;
             }
 
@@ -172,6 +180,22 @@ public class AdminDashboardActivity extends BaseNavigationActivity {
                 if ("Dipinjam".equalsIgnoreCase(tool.getStatus())) {
                     borrowedToolsList.add(tool);
                 }
+            }
+
+            if (brokenToolsList.isEmpty()) {
+                rvBrokenTools.setVisibility(View.GONE);
+                tvEmptyBroken.setVisibility(View.VISIBLE);
+            } else {
+                rvBrokenTools.setVisibility(View.VISIBLE);
+                tvEmptyBroken.setVisibility(View.GONE);
+            }
+
+            if (borrowedToolsList.isEmpty()) {
+                rvBorrowedTools.setVisibility(View.GONE);
+                tvEmptyBorrowed.setVisibility(View.VISIBLE);
+            } else {
+                rvBorrowedTools.setVisibility(View.VISIBLE);
+                tvEmptyBorrowed.setVisibility(View.GONE);
             }
 
             brokenToolsAdapter.notifyDataSetChanged();

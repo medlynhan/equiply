@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,7 +41,7 @@ public class HomeDashboardActivity extends BaseNavigationActivity {
     private BorrowHistoryDA borrowHistoryDA;
     private TextView userName, tvTime, tvDate;
     private TextView tvActiveLoanCount, tvDueTodayCount;
-    private TextView tvSeeAllItems;
+    private TextView tvSeeAllItems, tvEmpty;
     private StudentBorrowedAdapter adapter;
     private RecyclerView rvBorrowedItems;
     private ArrayList<Tool> borrowedTools;
@@ -66,6 +67,7 @@ public class HomeDashboardActivity extends BaseNavigationActivity {
         tvDueTodayCount = findViewById(R.id.dueTodayCount);
 
         tvSeeAllItems = findViewById(R.id.tvSeeAllItems);
+        tvEmpty = findViewById(R.id.tvEmptyActiveLoans);
 
         rvBorrowedItems = findViewById(R.id.rvActiveItems);
 
@@ -76,7 +78,6 @@ public class HomeDashboardActivity extends BaseNavigationActivity {
 
         startLiveClock();
         setupRecyclerView();
-        loadStudentData();
         
         tvSeeAllItems.setOnClickListener(v -> redirectToHistory());
 
@@ -102,38 +103,48 @@ public class HomeDashboardActivity extends BaseNavigationActivity {
         String userId = session.getUserId();
 
         borrowHistoryDA.getHistoryByUserId(userId, borrowHistories -> {
-            if (borrowedTools == null) return;
+            if (borrowedTools == null) borrowedTools = new ArrayList<>();
 
             borrowedTools.clear();
+            adapter.notifyDataSetChanged();
             int borrowedCounter = 0;
             int dueTodayCounter = 0;
+
+            if (borrowHistories == null || borrowHistories.isEmpty()) {
+                rvBorrowedItems.setVisibility(View.GONE);
+                tvEmpty.setVisibility(View.VISIBLE);
+                tvActiveLoanCount.setText("0");
+                tvDueTodayCount.setText("0");
+                return;
+            }
 
             for (BorrowHistory history : borrowHistories) {
                 String toolId = history.getToolId();
                 String returnDate = history.getReturnDate();
 
-                if ("Approved".equalsIgnoreCase(history.getStatus())) {
+                if ("Approved".equalsIgnoreCase(history.getStatus()) || "Dipinjam".equalsIgnoreCase(history.getStatus())) {
                     borrowedCounter++;
-                }
 
-                if (isOverdue(returnDate)) {
-                    dueTodayCounter++;
-                }
-
-                toolsDA.getToolById(toolId, tool -> {
-                    if ("Dipinjam".equalsIgnoreCase(tool.getStatus())) {
-                        tool.setReturnDate(returnDate);
-
-                        borrowedTools.add(tool);
-                        adapter.notifyDataSetChanged();
+                    if (isOverdue(returnDate)) {
+                        dueTodayCounter++;
                     }
-                });
+
+                    toolsDA.getToolById(toolId, tool -> {
+                        if (tool != null) {
+                            tool.setReturnDate(returnDate);
+
+                            borrowedTools.add(tool);
+                            adapter.notifyDataSetChanged();
+                            rvBorrowedItems.setVisibility(View.VISIBLE);
+                            tvEmpty.setVisibility(View.GONE);
+
+                        }
+                    });
+                }
             }
             tvActiveLoanCount.setText(String.valueOf(borrowedCounter));
             tvDueTodayCount.setText(String.valueOf(dueTodayCounter));
         });
-
-
     }
 
     private boolean isOverdue(String returnDate) {

@@ -121,7 +121,7 @@
                             android:id="@+id/activeLoanCount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="3"
+                            android:text="0"
                             android:textColor="@color/black_modif"
                             android:textSize="20sp"
                             android:textStyle="bold" />
@@ -169,7 +169,7 @@
                             android:id="@+id/dueTodayCount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="1"
+                            android:text="0"
                             android:textColor="@color/black_modif"
                             android:textSize="20sp"
                             android:textStyle="bold" />
@@ -201,19 +201,37 @@
                 app:layout_constraintBaseline_toBaselineOf="@id/tvYourItemsTitle"
                 app:layout_constraintEnd_toEndOf="parent" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvActiveItems"
+            <FrameLayout
+                android:id="@+id/borrowedListContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:clipToPadding="false"
-                android:nestedScrollingEnabled="false"
-                android:orientation="horizontal"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintTop_toBottomOf="@id/tvYourItemsTitle"
-                tools:listitem="@layout/layout_borrowed_tool_student" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <TextView
+                    android:id="@+id/tvEmptyActiveLoans"
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:gravity="center"
+                    android:text="Tidak ada barang yang sedang dipinjam"
+                    android:textColor="#9E9E9E"
+                    android:textSize="14sp"
+                    android:visibility="gone"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvActiveItems"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clipToPadding="false"
+                    android:nestedScrollingEnabled="false"
+                    android:orientation="horizontal"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    tools:listitem="@layout/layout_borrowed_tool_student" />
+            </FrameLayout>
+
             <LinearLayout
                 android:id="@+id/quickActionsContainer"
                 android:layout_width="match_parent"
@@ -222,7 +240,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:orientation="horizontal"
-                app:layout_constraintTop_toBottomOf="@id/rvActiveItems">
+                app:layout_constraintTop_toBottomOf="@id/borrowedListContainer">
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnSearchTools"

@@ -1,6 +1,8 @@
 package com.example.equiply.student_activity;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -23,6 +25,7 @@ public class NotificationActivity extends BaseNavigationActivity {
     private NotificationDA notificationDA;
     private SessionManager sessionManager;
     private RecyclerView notifRV;
+    private TextView tvEmptyState;
     private NotificationAdapter notifAdapter;
 
     @Override
@@ -50,8 +53,18 @@ public class NotificationActivity extends BaseNavigationActivity {
         notificationDA.getNotifications(sessionManager.getUserId(), new NotificationDA.NotificationCallback() {
             @Override
             public void onCallback(List<Notification> list) {
-                notifAdapter = new NotificationAdapter(list);
-                notifRV.setAdapter(notifAdapter);
+
+                tvEmptyState = findViewById(R.id.tvEmptyState);
+
+                if (list != null && !list.isEmpty()) {
+                    notifRV.setVisibility(View.VISIBLE);
+                    tvEmptyState.setVisibility(View.GONE);
+                    notifAdapter = new NotificationAdapter(list);
+                    notifRV.setAdapter(notifAdapter);
+                } else {
+                    notifRV.setVisibility(View.GONE);
+                    tvEmptyState.setVisibility(View.VISIBLE);
+                }
             }
 
             @Override

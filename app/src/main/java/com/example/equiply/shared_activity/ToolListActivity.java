@@ -6,6 +6,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -31,6 +32,7 @@ import java.util.ArrayList;
 
 public class ToolListActivity extends BaseNavigationActivity {
     private RecyclerView rvTools;
+    private TextView tvEmptyState;
     private ToolAdapter toolAdapter;
     private ToolsDA toolsDA;
     private EditText etSearch;
@@ -83,6 +85,7 @@ public class ToolListActivity extends BaseNavigationActivity {
 
     private void initializeViews() {
         rvTools = findViewById(R.id.rvTools);
+        tvEmptyState = findViewById(R.id.tvEmptyState);
         etSearch = findViewById(R.id.etSearch);
         chipGroupFilters = findViewById(R.id.chipGroupFilters);
         chipAll = findViewById(R.id.chipAll);
@@ -121,6 +124,14 @@ public class ToolListActivity extends BaseNavigationActivity {
                     }
                 }
 
+                if (toolList.isEmpty()) {
+                    rvTools.setVisibility(View.GONE);
+                    tvEmptyState.setVisibility(View.VISIBLE);
+                } else {
+                    rvTools.setVisibility(View.VISIBLE);
+                    tvEmptyState.setVisibility(View.GONE);
+                }
+
                 toolAdapter.updateData(toolList);
                 int checkedId = chipGroupFilters.getCheckedChipId();
                 if (checkedId != -1) {
@@ -135,6 +146,8 @@ public class ToolListActivity extends BaseNavigationActivity {
                 }
 
             } else {
+                rvTools.setVisibility(View.GONE);
+                tvEmptyState.setVisibility(View.VISIBLE);
                 Toast.makeText(this, "No tools available", Toast.LENGTH_SHORT).show();
             }
         });

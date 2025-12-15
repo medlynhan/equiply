@@ -3,7 +3,9 @@ package com.example.equiply.student_activity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -23,6 +25,7 @@ import java.util.ArrayList;
 
 public class HistoryActivity extends BaseNavigationActivity {
     private RecyclerView rvHistory;
+    private TextView tvEmptyState;
     private HistoryAdapter historyAdapter;
     private BorrowHistoryDA borrowHistoryDA;
     private EditText etSearch;
@@ -55,6 +58,7 @@ public class HistoryActivity extends BaseNavigationActivity {
 
     private void initializeViews() {
         rvHistory = findViewById(R.id.rvHistory);
+        tvEmptyState = findViewById(R.id.tvEmptyState);
         etSearch = findViewById(R.id.etSearch);
         chipGroupFilters = findViewById(R.id.chipGroupFilters);
         chipAll = findViewById(R.id.chipAll);
@@ -87,6 +91,9 @@ public class HistoryActivity extends BaseNavigationActivity {
 
         borrowHistoryDA.getHistoryByUserId(userId, histories -> {
             if (histories != null && !histories.isEmpty()) {
+                rvHistory.setVisibility(View.VISIBLE);
+                tvEmptyState.setVisibility(View.GONE);
+
                 borrowHistoryList.clear();
                 borrowHistoryListFull.clear();
 
@@ -95,7 +102,8 @@ public class HistoryActivity extends BaseNavigationActivity {
 
                 applyFilters();
             } else {
-                Toast.makeText(this, "No history available", Toast.LENGTH_SHORT).show();
+                rvHistory.setVisibility(View.GONE);
+                tvEmptyState.setVisibility(View.VISIBLE);
             }
         });
     }
