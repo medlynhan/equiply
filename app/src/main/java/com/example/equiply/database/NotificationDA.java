@@ -4,6 +4,7 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
+import com.example.equiply.R;
 import com.example.equiply.model.Notification;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -175,7 +176,7 @@ public class NotificationDA {
 
         androidx.core.app.NotificationCompat.Builder builder =
                 new androidx.core.app.NotificationCompat.Builder(context, channelId)
-                        .setSmallIcon(android.R.drawable.ic_dialog_alert)
+                        .setSmallIcon(R.mipmap.logo)
                         .setContentTitle("Tool Return Reminder")
                         .setContentText("Please return: " + toolName)
                         .setPriority(androidx.core.app.NotificationCompat.PRIORITY_HIGH)
