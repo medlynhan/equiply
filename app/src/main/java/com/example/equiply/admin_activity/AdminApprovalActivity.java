@@ -28,9 +28,11 @@ import com.example.equiply.database.UserDA;
 import com.example.equiply.model.BorrowHistory;
 import com.example.equiply.model.LendingRequest;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class AdminApprovalActivity extends AppCompatActivity {
     private RecyclerView rvBorrow, rvReturn;
+    private FloatingActionButton fabBack;
     private TextView tvEmptyBorrow, tvEmptyReturn;
     private BorrowHistoryDA borrowHistoryDA;
     private LendingRequestDA lendingRequestDA;
@@ -53,6 +55,9 @@ public class AdminApprovalActivity extends AppCompatActivity {
 
         rvBorrow = findViewById(R.id.rvBorrowRequests);
         rvReturn = findViewById(R.id.rvReturnRequests);
+
+        fabBack = findViewById(R.id.fabBack);
+        fabBack.setOnClickListener(v -> finish());
 
         tvEmptyBorrow = findViewById(R.id.tvEmptyBorrow);
         tvEmptyReturn = findViewById(R.id.tvEmptyReturn);
