@@ -25,7 +25,6 @@ import com.example.equiply.database.ToolsDA;
 import com.example.equiply.helper.QRCodeScanner;
 import com.example.equiply.helper.SessionManager;
 import com.example.equiply.model.BorrowHistory;
-import com.example.equiply.model.Tool;
 import com.example.equiply.shared_activity.ToolListActivity;
 import com.google.zxing.integration.android.IntentIntegrator;
 
@@ -44,7 +43,7 @@ public class HomeDashboardActivity extends BaseNavigationActivity {
     private TextView tvSeeAllItems, tvEmpty;
     private StudentBorrowedAdapter adapter;
     private RecyclerView rvBorrowedItems;
-    private ArrayList<Tool> borrowedTools;
+    private ArrayList<BorrowHistory> borrowHistories;
     private Button btnSearchTools, btnScanQR;
     private static final int NOTIFICATION_PERMISSION_CODE = 101;
     private final Handler timeHandler = new Handler();
@@ -57,7 +56,7 @@ public class HomeDashboardActivity extends BaseNavigationActivity {
         session = new SessionManager(this);
         toolsDA = new ToolsDA(this);
         borrowHistoryDA = new BorrowHistoryDA();
-        borrowedTools = new ArrayList<>();
+        borrowHistories = new ArrayList<>();
 
         userName = findViewById(R.id.userName);
         tvTime = findViewById(R.id.tvTime);
@@ -95,7 +94,7 @@ public class HomeDashboardActivity extends BaseNavigationActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         rvBorrowedItems.setLayoutManager(layoutManager);
 
-        adapter = new StudentBorrowedAdapter(this, borrowedTools);
+        adapter = new StudentBorrowedAdapter(this, borrowHistories);
         rvBorrowedItems.setAdapter(adapter);
     }
 
@@ -103,23 +102,14 @@ public class HomeDashboardActivity extends BaseNavigationActivity {
         String userId = session.getUserId();
 
         borrowHistoryDA.getHistoryByUserId(userId, borrowHistories -> {
-            if (borrowedTools == null) borrowedTools = new ArrayList<>();
+            if (this.borrowHistories == null) this.borrowHistories = new ArrayList<>();
 
-            borrowedTools.clear();
-            adapter.notifyDataSetChanged();
+            this.borrowHistories.clear();
+
             int borrowedCounter = 0;
             int dueTodayCounter = 0;
 
-            if (borrowHistories == null || borrowHistories.isEmpty()) {
-                rvBorrowedItems.setVisibility(View.GONE);
-                tvEmpty.setVisibility(View.VISIBLE);
-                tvActiveLoanCount.setText("0");
-                tvDueTodayCount.setText("0");
-                return;
-            }
-
             for (BorrowHistory history : borrowHistories) {
-                String toolId = history.getToolId();
                 String returnDate = history.getReturnDate();
 
                 if ("Approved".equalsIgnoreCase(history.getStatus()) || "Dipinjam".equalsIgnoreCase(history.getStatus())) {
@@ -129,21 +119,22 @@ public class HomeDashboardActivity extends BaseNavigationActivity {
                         dueTodayCounter++;
                     }
 
-                    toolsDA.getToolById(toolId, tool -> {
-                        if (tool != null) {
-                            tool.setReturnDate(returnDate);
-
-                            borrowedTools.add(tool);
-                            adapter.notifyDataSetChanged();
-                            rvBorrowedItems.setVisibility(View.VISIBLE);
-                            tvEmpty.setVisibility(View.GONE);
-
-                        }
-                    });
+                    this.borrowHistories.add(history);
                 }
             }
+
             tvActiveLoanCount.setText(String.valueOf(borrowedCounter));
             tvDueTodayCount.setText(String.valueOf(dueTodayCounter));
+
+            if (this.borrowHistories.isEmpty()) {
+                rvBorrowedItems.setVisibility(View.GONE);
+                tvEmpty.setVisibility(View.VISIBLE);
+            } else {
+                rvBorrowedItems.setVisibility(View.VISIBLE);
+                tvEmpty.setVisibility(View.GONE);
+            }
+
+            adapter.notifyDataSetChanged();
         });
     }
 

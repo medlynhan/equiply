@@ -193,7 +193,7 @@ public class AdminApprovalActivity extends AppCompatActivity {
             }
 
             btnApprove.setOnClickListener(v -> {
-                lendingRequestDA.approveReturn(item.getRequestId(), item.getToolId(), item.getCondition(), success -> {
+                lendingRequestDA.approveReturn(item.getRequestId(), item.getToolId(), item.getUserId(), item.getCondition(), success -> {
                     if (success) {
                         String msg = "Pengembalian Diterima";
                         if ("Rusak".equalsIgnoreCase(item.getCondition())) {

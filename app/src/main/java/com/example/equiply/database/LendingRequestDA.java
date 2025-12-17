@@ -74,11 +74,9 @@ public class LendingRequestDA {
                             String currentToolId = data.child("toolId").getValue(String.class);
                             String currentStatus = data.child("status").getValue(String.class);
 
-                            // Find the active borrow request for this tool
                             if (toolId.equals(currentToolId) &&
                                     (currentStatus.equalsIgnoreCase("approved") || currentStatus.equalsIgnoreCase("Dipinjam"))) {
 
-                                // Set status to match what HistoryAdapter looks for
                                 data.getRef().child("status").setValue("pending_return");
                             }
                         }
@@ -141,7 +139,40 @@ public class LendingRequestDA {
                 });
     }
 
-    public void approveReturn(String requestId, String toolId, String condition, Consumer<Boolean> callback) {
+    private void updateHistoryStatusToReturned(String userId, String toolId) {
+        mDatabase.child("history")
+                .orderByChild("userId")
+                .equalTo(userId)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        NotificationDA notificationDA = new NotificationDA();
+
+                        for (DataSnapshot data : snapshot.getChildren()) {
+                            String currentToolId = data.child("toolId").getValue(String.class);
+                            String currentStatus = data.child("status").getValue(String.class);
+
+                            if (toolId.equals(currentToolId) &&
+                                    (currentStatus.equalsIgnoreCase("pending_return") ||
+                                            currentStatus.equalsIgnoreCase("Approved") ||
+                                            currentStatus.equalsIgnoreCase("Dipinjam"))) {
+
+                                data.getRef().child("status").setValue("Returned");
+                                data.getRef().child("actualReturnDate").setValue(System.currentTimeMillis());
+                                String historyId = data.getKey();
+                                if (historyId == null) historyId = data.child("id").getValue(String.class);
+
+                                notificationDA.deleteNotificationByBorrowId(userId, historyId);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {}
+                });
+    }
+
+    public void approveReturn(String requestId, String toolId, String userId, String condition, Consumer<Boolean> callback) {
         mDatabase.child("return_requests")
                 .child(requestId)
                 .child("status")
@@ -150,6 +181,8 @@ public class LendingRequestDA {
                     DatabaseReference toolRef = mDatabase.child("tools").child(toolId);
                     toolRef.child("status").setValue("Tersedia");
                     toolRef.child("toolStatus").setValue(condition);
+
+                    updateHistoryStatusToReturned(userId, toolId);
 
                     callback.accept(true);
                 })

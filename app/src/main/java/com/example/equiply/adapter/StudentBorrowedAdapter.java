@@ -1,6 +1,8 @@
 package com.example.equiply.adapter;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,11 +11,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.equiply.R;
+import com.example.equiply.model.BorrowHistory;
 import com.example.equiply.model.Tool;
+import com.example.equiply.student_activity.HistoryDetailActivity;
 import com.google.android.material.card.MaterialCardView;
 
 import java.text.ParseException;
@@ -24,11 +29,11 @@ import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public class StudentBorrowedAdapter extends RecyclerView.Adapter<StudentBorrowedAdapter.ViewHolder> {
-    private final ArrayList<Tool> borrowedTools;
+    private final ArrayList<BorrowHistory> borrowHistories;
     private final Context context;
 
-    public StudentBorrowedAdapter(Context context, ArrayList<Tool> borrowedTools) {
-        this.borrowedTools = borrowedTools;
+    public StudentBorrowedAdapter(Context context, ArrayList<BorrowHistory> borrowHistories) {
+        this.borrowHistories = borrowHistories;
         this.context = context;
     }
 
@@ -41,14 +46,14 @@ public class StudentBorrowedAdapter extends RecyclerView.Adapter<StudentBorrowed
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Tool tool = borrowedTools.get(position);
+        BorrowHistory history = borrowHistories.get(position);
 
-        holder.tvToolName.setText(tool.getName());
-        holder.tvReturnDate.setText("Kembali: " + tool.getReturnDate());
+        holder.tvToolName.setText(history.getToolName());
+        holder.tvReturnDate.setText("Kembali: " + history.getReturnDate());
 
-        if (tool.getImageUrl() != null && !tool.getImageUrl().isEmpty()) {
+        if (history.getImageUrl() != null && !history.getImageUrl().isEmpty()) {
             Glide.with(context)
-                    .load(tool.getImageUrl())
+                    .load(history.getImageUrl())
                     .placeholder(R.drawable.ic_img_placeholder)
                     .error(R.drawable.ic_img_placeholder)
                     .into(holder.ivToolImage);
@@ -56,7 +61,7 @@ public class StudentBorrowedAdapter extends RecyclerView.Adapter<StudentBorrowed
 
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-            Date returnDate = sdf.parse(tool.getReturnDate());
+            Date returnDate = sdf.parse(history.getReturnDate());
             Date today = new Date();
 
             if (returnDate != null) {
@@ -77,20 +82,41 @@ public class StudentBorrowedAdapter extends RecyclerView.Adapter<StudentBorrowed
         } catch (ParseException e) {
             holder.tvDaysLeft.setText("-");
         }
+
+        holder.cardView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, HistoryDetailActivity.class);
+            // Passing data LENGKAP dari BorrowHistory
+            intent.putExtra("HISTORY_ID", history.getId());
+            intent.putExtra("TOOL_ID", history.getToolId());
+            intent.putExtra("TOOL_NAME", history.getToolName());
+            intent.putExtra("TOOL_IMAGE", history.getImageUrl());
+            intent.putExtra("STATUS", history.getStatus());
+            intent.putExtra("RETURN_DATE", history.getReturnDate());
+            intent.putExtra("USER_ID", history.getUserId());
+            intent.putExtra("REASON", history.getReason());
+            intent.putExtra("BORROW_DATE", history.getBorrowDate());
+
+            context.startActivity(intent);
+            if (context instanceof Activity) {
+                ((Activity) context).overridePendingTransition(0, 0);
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
-        return borrowedTools.size();
+        return borrowHistories.size();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
+        CardView cardView;
         ImageView ivToolImage;
         TextView tvDaysLeft, tvToolName, tvReturnDate;
         MaterialCardView badgeCard;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            cardView =  itemView.findViewById(R.id.cardView);
             ivToolImage = itemView.findViewById(R.id.ivToolImage);
             tvDaysLeft = itemView.findViewById(R.id.tvDaysLeft);
             tvToolName = itemView.findViewById(R.id.tvToolName);

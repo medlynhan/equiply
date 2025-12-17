@@ -105,13 +105,23 @@ public class ToolsDA {
     public void updateTool(String toolId, String name, String description,
                            String status, String condition, String imageUrl,
                            Consumer<Boolean> callback) {
-        Tool updatedTool = new Tool(toolId, name, description, status, imageUrl, condition);
-        mDatabase.child("tools").child(toolId).setValue(updatedTool)
+
+        java.util.Map<String, Object> updates = new java.util.HashMap<>();
+
+        updates.put("name", name);
+        updates.put("description", description);
+        updates.put("status", status);
+        updates.put("toolStatus", condition);
+
+        if (imageUrl != null && !imageUrl.isEmpty()) {
+            updates.put("imageUrl", imageUrl);
+        }
+
+        mDatabase.child("tools").child(toolId).updateChildren(updates)
                 .addOnCompleteListener(task -> {
                     callback.accept(task.isSuccessful());
                 });
     }
-
     public void updateToolWithNewImage(Context context, String toolId, Uri newImageUri,
                                        String name, String description,
                                        String status, String condition,

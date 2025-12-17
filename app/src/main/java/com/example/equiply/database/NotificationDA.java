@@ -33,7 +33,7 @@ public class NotificationDA {
         void onError(String error);
     }
 
-    public void addNotification(String userId, String toolName, String loanId) {
+    public void addNotification(String userId, String toolName, String loanId, String borrowId) {
         String notificationId = mDatabase.child("users").child(userId).child("notifications").push().getKey();
 
         if (notificationId == null) return;
@@ -43,6 +43,7 @@ public class NotificationDA {
         notif.put("message", "Your borrowed '" + toolName + "' is due soon.");
         notif.put("timestamp", System.currentTimeMillis());
         notif.put("loanId", loanId);
+        notif.put("borrowId", borrowId);
 
         mDatabase.child("users")
                 .child(userId)
@@ -75,8 +76,9 @@ public class NotificationDA {
                                 SimpleDateFormat sdf = new SimpleDateFormat("dd MMM, HH:mm", Locale.getDefault());
                                 dateStr = sdf.format(date);
                             }
+                            String borrowId = data.child("borrowId").getValue(String.class);
 
-                            notifList.add(new Notification(title, message, dateStr));
+                            notifList.add(new Notification(title, message, dateStr, borrowId));
                         }
 
                         Collections.reverse(notifList);
@@ -88,6 +90,26 @@ public class NotificationDA {
                     public void onCancelled(@NonNull DatabaseError error) {
                         callback.onError(error.getMessage());
                     }
+                });
+    }
+
+    public void deleteNotificationByBorrowId(String userId, String borrowId) {
+        if (userId == null || borrowId == null) return;
+
+        mDatabase.child("users").child(userId).child("notifications")
+                .orderByChild("borrowId")
+                .equalTo(borrowId)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot data : snapshot.getChildren()) {
+                            data.getRef().removeValue()
+                                    .addOnSuccessListener(aVoid -> System.out.println("Notification deleted for borrowId: " + borrowId))
+                                    .addOnFailureListener(e -> System.err.println("Failed to delete notification: " + e.getMessage()));
+                        }
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {}
                 });
     }
 
@@ -105,6 +127,8 @@ public class NotificationDA {
                             String status = loan.child("status").getValue(String.class);
                             String returnDateStr = loan.child("returnDate").getValue(String.class);
                             String toolName = loan.child("toolName").getValue(String.class);
+                            String borrowId = loan.child("id").getValue(String.class);
+
                             String loanId = loan.getKey();
 
                             Boolean notified = loan.child("isNotified").getValue(Boolean.class);
@@ -122,7 +146,7 @@ public class NotificationDA {
                                     long diff = returnDateMillis - now;
 
                                     if (diff < twoDaysInMillis) {
-                                        addNotification(userId, toolName, loanId);
+                                        addNotification(userId, toolName, loanId, borrowId);
                                         showSystemNotification(context, toolName);
                                         loan.getRef().child("isNotified").setValue(true);
                                     }
