@@ -149,7 +149,7 @@
                             android:layout_weight="1"
                             android:text="Baik"
                             android:textSize="16sp"
-                            android:buttonTint="@color/blue_medium"
+                            app:buttonTint="@color/blue_light"
                             android:checked="true"/>
 
                         <RadioButton
@@ -159,7 +159,7 @@
                             android:layout_weight="1"
                             android:text="Rusak"
                             android:textSize="16sp"
-                            android:buttonTint="@color/blue_medium"/>
+                            app:buttonTint="@color/blue_light"/>
                     </RadioGroup>
 
                     <TextView

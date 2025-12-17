@@ -205,12 +205,13 @@ public class AdminApprovalActivity extends AppCompatActivity {
                     }
                 });
 
-                borrowHistoryDA.updateHistoryStatusToReturned(user.getId(), item.getToolId());
+                borrowHistoryDA.updateHistoryStatus(user.getId(), item.getToolId(), "Returned");
             });
 
             btnReject.setOnClickListener(v -> {
                 lendingRequestDA.rejectReturn(item.getRequestId(), success -> {
                     if (success) {
+                        borrowHistoryDA.updateHistoryStatus(user.getId(), item.getToolId(), "Dipinjam");
                         Toast.makeText(this, "Pengembalian Ditolak", Toast.LENGTH_SHORT).show();
                         loadReturnRequests();
                         dialog.dismiss();

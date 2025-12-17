@@ -49,21 +49,47 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
 
         holder.tvItemTitle.setText(borrowHistory.getToolName());
 
-        String status = borrowHistory.getStatus();
+        String status = borrowHistory.getStatus() != null ? borrowHistory.getStatus().toLowerCase() : "";
 
-        if (status.equals("Approved")) {
-            holder.tvItemStatus.setText("Dipinjam");
-            holder.tvItemStatus.setTextColor(ContextCompat.getColor(context, R.color.black_modif));
-            holder.statusBadge.setCardBackgroundColor(Color.parseColor("#FF9800"));
+        switch (status) {
+            case "approved":
+            case "dipinjam":
+                holder.tvItemStatus.setText("Dipinjam");
+                holder.tvItemStatus.setTextColor(ContextCompat.getColor(context, R.color.black_modif));
+                holder.statusBadge.setCardBackgroundColor(Color.parseColor("#FF9800")); // Orange
+                break;
 
-        } else if (status.equalsIgnoreCase("Pending")) {
-            holder.tvItemStatus.setText("Menunggu");
-            holder.tvItemStatus.setTextColor(ContextCompat.getColor(context, R.color.black_modif));
-            holder.statusBadge.setCardBackgroundColor(Color.GRAY);
-        } else if (status.equals("Returned")) {
-            holder.tvItemStatus.setText("Dikembalikan");
-            holder.tvItemStatus.setTextColor(ContextCompat.getColor(context, R.color.black_modif));
-            holder.statusBadge.setCardBackgroundColor(Color.parseColor("#4CAF50"));
+            case "pending":
+                holder.tvItemStatus.setText("Menunggu");
+                holder.tvItemStatus.setTextColor(ContextCompat.getColor(context, R.color.black_modif));
+                holder.statusBadge.setCardBackgroundColor(Color.GRAY);
+                break;
+
+            case "pending_return":
+                holder.tvItemStatus.setText("Verifikasi");
+                holder.tvItemStatus.setTextColor(ContextCompat.getColor(context, R.color.black_modif));
+                holder.statusBadge.setCardBackgroundColor(Color.parseColor("#FFC107")); // Amber/Yellow
+                break;
+
+            case "returned":
+            case "dikembalikan":
+                holder.tvItemStatus.setText("Dikembalikan");
+                holder.tvItemStatus.setTextColor(ContextCompat.getColor(context, R.color.black_modif));
+                holder.statusBadge.setCardBackgroundColor(Color.parseColor("#4CAF50")); // Green
+                break;
+
+            case "rejected":
+            case "ditolak":
+                holder.tvItemStatus.setText("Ditolak");
+                holder.tvItemStatus.setTextColor(Color.WHITE);
+                holder.statusBadge.setCardBackgroundColor(Color.parseColor("#D32F2F")); // Red
+                break;
+
+            default:
+                holder.tvItemStatus.setText(status);
+                holder.tvItemStatus.setTextColor(ContextCompat.getColor(context, R.color.black_modif));
+                holder.statusBadge.setCardBackgroundColor(Color.LTGRAY);
+                break;
         }
 
         holder.tvDate.setText(borrowHistory.getRequestDate());

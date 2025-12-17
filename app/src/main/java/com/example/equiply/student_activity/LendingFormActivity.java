@@ -23,6 +23,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.bumptech.glide.Glide;
 import com.example.equiply.R;
+import com.example.equiply.database.BorrowHistoryDA;
 import com.example.equiply.database.LendingRequestDA;
 
 import java.text.SimpleDateFormat;
@@ -43,6 +44,7 @@ public class LendingFormActivity extends AppCompatActivity {
     private String toolId, toolName, toolPicture, userId;
     private Uri proofPhotoUri;
     private LendingRequestDA lendingRequestDA;
+    private BorrowHistoryDA borrowHistoryDA;
 
     private final ActivityResultLauncher<String> pickImage = registerForActivityResult(
             new ActivityResultContracts.GetContent(),
@@ -83,6 +85,7 @@ public class LendingFormActivity extends AppCompatActivity {
         btnSubmitReturn = findViewById(R.id.btnSubmitReturn);
 
         lendingRequestDA = new LendingRequestDA(this);
+        borrowHistoryDA = new BorrowHistoryDA();
         toolId = getIntent().getStringExtra("TOOL_ID");
         toolName = getIntent().getStringExtra("TOOL_NAME");
         toolPicture = getIntent().getStringExtra("TOOL_PICTURE");
@@ -143,7 +146,9 @@ public class LendingFormActivity extends AppCompatActivity {
                 proofPhotoUri,
                 success -> {
                     if (success) {
+                        borrowHistoryDA.updateHistoryStatus(userId, toolId, "pending_return");
                         Toast.makeText(this, "Pengembalian berhasil diajukan!", Toast.LENGTH_LONG).show();
+                        setResult(RESULT_OK);
                         finish();
                     } else {
                         Toast.makeText(this, "Gagal mengajukan pengembalian!", Toast.LENGTH_LONG).show();

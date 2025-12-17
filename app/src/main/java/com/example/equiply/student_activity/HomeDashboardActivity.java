@@ -112,7 +112,9 @@ public class HomeDashboardActivity extends BaseNavigationActivity {
             for (BorrowHistory history : borrowHistories) {
                 String returnDate = history.getReturnDate();
 
-                if ("Approved".equalsIgnoreCase(history.getStatus()) || "Dipinjam".equalsIgnoreCase(history.getStatus())) {
+                if ("Approved".equalsIgnoreCase(history.getStatus())
+                        || "Dipinjam".equalsIgnoreCase(history.getStatus())
+                        || "pending_return".equalsIgnoreCase(history.getStatus())) {
                     borrowedCounter++;
 
                     if (isOverdue(returnDate)) {

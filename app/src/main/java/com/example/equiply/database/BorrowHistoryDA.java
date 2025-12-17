@@ -143,7 +143,7 @@ public class BorrowHistoryDA {
         });
     }
 
-    public void updateHistoryStatusToReturned(String userId, String toolId) {
+    public void updateHistoryStatus(String userId, String toolId, String newStatus) {
         mDatabase.child("history")
                 .orderByChild("userId")
                 .equalTo(userId)
@@ -154,18 +154,21 @@ public class BorrowHistoryDA {
                             String currentToolId = data.child("toolId").getValue(String.class);
                             String currentStatus = data.child("status").getValue(String.class);
 
-                            if (toolId.equals(currentToolId) &&
-                                    (currentStatus.equalsIgnoreCase("pending_return") ||
-                                            currentStatus.equalsIgnoreCase("Approved") ||
-                                            currentStatus.equalsIgnoreCase("Dipinjam"))) {
-                                data.getRef().child("status").setValue("Returned");
+                            if (toolId != null && toolId.equals(currentToolId) &&
+                                    (currentStatus.equalsIgnoreCase("Approved") ||
+                                            currentStatus.equalsIgnoreCase("Dipinjam") ||
+                                            currentStatus.equalsIgnoreCase("pending_return"))) {
 
-                                data.getRef().child("actualReturnDate").setValue(System.currentTimeMillis());
+                                data.getRef().child("status").setValue(newStatus);
+                                if ("Returned".equalsIgnoreCase(newStatus)) {
+                                    data.getRef().child("actualReturnDate").setValue(System.currentTimeMillis());
+                                }
                             }
                         }
                     }
+
                     @Override
-                    public void onCancelled(@NonNull DatabaseError error) {}
+                    public void onCancelled(@NonNull DatabaseError error) { }
                 });
     }
 
