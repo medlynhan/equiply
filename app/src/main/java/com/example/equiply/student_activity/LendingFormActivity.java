@@ -1,6 +1,5 @@
 package com.example.equiply.student_activity;
 
-import android.graphics.Insets;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -18,12 +17,14 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.bumptech.glide.Glide;
 import com.example.equiply.R;
-import com.example.equiply.helper.LendingRequestDA;
+import com.example.equiply.database.BorrowHistoryDA;
+import com.example.equiply.database.LendingRequestDA;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -43,15 +44,15 @@ public class LendingFormActivity extends AppCompatActivity {
     private String toolId, toolName, toolPicture, userId;
     private Uri proofPhotoUri;
     private LendingRequestDA lendingRequestDA;
+    private BorrowHistoryDA borrowHistoryDA;
 
     private final ActivityResultLauncher<String> pickImage = registerForActivityResult(
             new ActivityResultContracts.GetContent(),
             uri -> {
                 if (uri != null) {
                     proofPhotoUri = uri;
-                    // Update UI: Hide placeholder, show image
                     ivPhotoPreview.setImageURI(uri);
-                    ivPhotoPreview.setAlpha(1.0f); // Remove transparency
+                    ivPhotoPreview.setAlpha(1.0f);
                     llPhotoPlaceholder.setVisibility(View.GONE);
                 }
             }
@@ -64,7 +65,7 @@ public class LendingFormActivity extends AppCompatActivity {
         setContentView(R.layout.activity_lending_form);
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars()).toPlatformInsets();
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
@@ -84,6 +85,7 @@ public class LendingFormActivity extends AppCompatActivity {
         btnSubmitReturn = findViewById(R.id.btnSubmitReturn);
 
         lendingRequestDA = new LendingRequestDA(this);
+        borrowHistoryDA = new BorrowHistoryDA();
         toolId = getIntent().getStringExtra("TOOL_ID");
         toolName = getIntent().getStringExtra("TOOL_NAME");
         toolPicture = getIntent().getStringExtra("TOOL_PICTURE");
@@ -101,8 +103,14 @@ public class LendingFormActivity extends AppCompatActivity {
         findViewById(R.id.fabBack).setOnClickListener(v -> finish());
         // photo upload button
         cvPhotoUpload.setOnClickListener(v -> {
-            pickImage.launch("image/*"); // buka gallery
+            pickImage.launch("image/*");
         });
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(0, 0);
     }
 
     private void submitForm() {
@@ -124,6 +132,9 @@ public class LendingFormActivity extends AppCompatActivity {
             return;
         }
 
+        btnSubmitReturn.setEnabled(false);
+        btnSubmitReturn.setText("Memproses...");
+
         String returnDate = new SimpleDateFormat("d/M/yyyy", Locale.getDefault()).format(new Date());
 
         lendingRequestDA.addNewRequest(
@@ -135,10 +146,14 @@ public class LendingFormActivity extends AppCompatActivity {
                 proofPhotoUri,
                 success -> {
                     if (success) {
+                        borrowHistoryDA.updateHistoryStatus(userId, toolId, "pending_return");
                         Toast.makeText(this, "Pengembalian berhasil diajukan!", Toast.LENGTH_LONG).show();
+                        setResult(RESULT_OK);
                         finish();
                     } else {
                         Toast.makeText(this, "Gagal mengajukan pengembalian!", Toast.LENGTH_LONG).show();
+                        btnSubmitReturn.setEnabled(true);
+                        btnSubmitReturn.setText("Ajukan Pengembalian");
                     }
                 }
         );

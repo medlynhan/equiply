@@ -3,54 +3,52 @@ package com.example.equiply.admin_activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.example.equiply.R;
-import com.example.equiply.helper.RealtimeDatabaseFirebase;
+import com.example.equiply.database.ToolsDA;
+import com.example.equiply.shared_activity.ToolListActivity;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.database.FirebaseDatabase; // <-- Import ini
 
 public class AddToolActivity extends AppCompatActivity {
 
     private static final int PICK_IMAGE_REQUEST = 1;
+    private FloatingActionButton fabBack;
     private MaterialButton uploadPicture, saveToolBtn;
     private ImageView previewImage;
     private TextInputEditText toolNameET, toolDescET;
-
-    private RealtimeDatabaseFirebase db;
+    private ToolsDA toolsDA;
     private Uri selectedImageUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_add_tool);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
 
-        db = new RealtimeDatabaseFirebase(this);
+        toolsDA = new ToolsDA(this);
+        fabBack = findViewById(R.id.fabBack);
         uploadPicture = findViewById(R.id.uploadPicture);
         saveToolBtn = findViewById(R.id.saveToolBtn);
         previewImage = findViewById(R.id.previewImage);
         toolNameET = findViewById(R.id.toolNameET);
         toolDescET = findViewById(R.id.toolDescET);
 
-
+        fabBack.setOnClickListener(v -> finish());
         uploadPicture.setOnClickListener(v -> openFileChooser());
         saveToolBtn.setOnClickListener(v -> saveTool());
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(0, 0);
     }
 
     private void openFileChooser() {
@@ -70,23 +68,47 @@ public class AddToolActivity extends AppCompatActivity {
     }
 
     private void saveTool() {
+        setLoadingState(true);
+
         String name = toolNameET.getText().toString().trim();
         String description = toolDescET.getText().toString().trim();
 
         if (selectedImageUri == null) {
             Toast.makeText(this, "Please upload a image", Toast.LENGTH_SHORT).show();
+            setLoadingState(false);
             return;
         }
         if (name.isEmpty() || description.isEmpty()) {
             Toast.makeText(this, "Please input name and description", Toast.LENGTH_SHORT).show();
+            setLoadingState(false);
             return;
         }
 
-        //generate ID unik untuk tool baru menggunakan Firebase
         String toolId = FirebaseDatabase.getInstance().getReference("tools").push().getKey();
 
         if (toolId != null) {
-            db.addNewTools(AddToolActivity.this, selectedImageUri, toolId, name, description);
+            toolsDA.addNewTools(AddToolActivity.this, selectedImageUri, toolId, name, description,
+                    successMsg -> {
+                        Toast.makeText(this, successMsg, Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(this, ToolListActivity.class);
+                        startActivity(intent);
+                        overridePendingTransition(0, 0);
+                    },
+                    errorMsg -> {
+                        setLoadingState(false);
+                        Toast.makeText(this, errorMsg, Toast.LENGTH_SHORT).show();
+                    }
+            );
+        }
+    }
+
+    private void setLoadingState(boolean isLoading) {
+        if (isLoading) {
+            saveToolBtn.setEnabled(false);
+            saveToolBtn.setText("Saving...");
+        } else {
+            saveToolBtn.setEnabled(true);
+            saveToolBtn.setText("Save Tool");
         }
     }
 }

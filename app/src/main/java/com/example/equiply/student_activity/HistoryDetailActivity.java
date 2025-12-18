@@ -8,10 +8,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import com.bumptech.glide.Glide;
 import com.example.equiply.R;
+import com.example.equiply.database.BorrowHistoryDA;
+import com.example.equiply.model.BorrowHistory;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 
@@ -26,22 +33,56 @@ public class HistoryDetailActivity extends AppCompatActivity {
     private String toolId, toolName, toolImage, userId;
     private String status, borrowDate, returnDate, reason;
 
+    private BorrowHistoryDA borrowHistoryDA;
+
+    private final ActivityResultLauncher<Intent> lendingLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK) {
+                    this.status = "pending_return";
+                    configureStatusLogic();
+                }
+            }
+    );
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_history_detail); // Make sure this matches your XML filename
+        setContentView(R.layout.activity_history_detail);
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
+        borrowHistoryDA = new BorrowHistoryDA();
 
         initViews();
-
-        // ambil data dari HistoryAdapter
         getIntentData();
-
-        // set data to UI
         setupUI();
-
-        // ngehandle back button
         findViewById(R.id.fabBack).setOnClickListener(v -> finish());
+    }
+
+    private void refreshData() {
+        if (userId != null && toolId != null) {
+            borrowHistoryDA.getHistoryByUserId(userId, histories -> {
+                for (BorrowHistory h : histories) {
+                    if (h.getToolId().equals(toolId)) {
+                        this.status = h.getStatus();
+                        this.returnDate = h.getReturnDate();
+                        configureStatusLogic();
+                        break;
+                    }
+                }
+            });
+        }
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(0, 0);
     }
 
     private void initViews() {
@@ -96,7 +137,6 @@ public class HistoryDetailActivity extends AppCompatActivity {
             statusBadge.setCardBackgroundColor(Color.parseColor("#FF9800")); // Orange
 
             btnAction.setText("Kembalikan Alat");
-            // btnAction.setIconResource(R.drawable.ic_back); // Uncomment if you have an icon
             btnAction.setEnabled(true);
             btnAction.setBackgroundColor(Color.parseColor("#80D4E7")); // Light Blue
 
@@ -106,7 +146,7 @@ public class HistoryDetailActivity extends AppCompatActivity {
                 intent.putExtra("TOOL_NAME", toolName);
                 intent.putExtra("TOOL_PICTURE", toolImage);
                 intent.putExtra("USER_ID", userId);
-                startActivity(intent);
+                lendingLauncher.launch(intent);
             });
 
         } else if (currentStatus.equals("pending_return")) {

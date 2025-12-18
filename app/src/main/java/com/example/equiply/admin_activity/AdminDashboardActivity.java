@@ -7,20 +7,17 @@ import android.view.View;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.equiply.BaseNavigationActivity;
 import com.example.equiply.R;
+import com.example.equiply.database.UserDA;
 import com.example.equiply.shared_activity.ToolListActivity;
-import com.example.equiply.shared_activity.ProfileActivity;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.example.equiply.adapter.BrokenToolsAdapter;
 import com.example.equiply.adapter.BorrowedToolsAdapter;
-import com.example.equiply.helper.RealtimeDatabaseFirebase;
+import com.example.equiply.database.ToolsDA;
+import com.google.android.material.card.MaterialCardView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.example.equiply.model.Tool;
 
@@ -30,13 +27,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
-public class AdminDashboardActivity extends AppCompatActivity {
-
-    private BottomNavigationView adminNavView;
-    private RealtimeDatabaseFirebase db;
-
+public class AdminDashboardActivity extends BaseNavigationActivity {
+    private ToolsDA toolsDA;
+    private UserDA userDA;
     // Header items
     private TextView tvAdminName, tvTime, tvDate;
+
+    private MaterialCardView btnApproval;
 
     // Stat cards
     private TextView tvTotalBorrowed, tvTotalBroken;
@@ -44,11 +41,13 @@ public class AdminDashboardActivity extends AppCompatActivity {
 
     // RecyclerView BROKEN TOOLS
     private RecyclerView rvBrokenTools;
+    private TextView tvEmptyBroken;
     private BrokenToolsAdapter brokenToolsAdapter;
     private final ArrayList<Tool> brokenToolsList = new ArrayList<>();
 
     // RecyclerView BORROWED TOOLS
     private RecyclerView rvBorrowedTools;
+    private TextView tvEmptyBorrowed;
     private BorrowedToolsAdapter borrowedToolsAdapter;
     private final ArrayList<Tool> borrowedToolsList = new ArrayList<>();
 
@@ -59,26 +58,29 @@ public class AdminDashboardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_admin_dashboard);
-        db = new RealtimeDatabaseFirebase(this);
 
-        View root = findViewById(android.R.id.content);
-        ViewCompat.setOnApplyWindowInsetsListener(root, (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top,
-                    systemBars.right, systemBars.bottom);
-            return insets;
-        });
+        toolsDA = new ToolsDA(this);
+        userDA = new UserDA();
 
         tvAdminName = findViewById(R.id.tvAdminName);
         tvTime = findViewById(R.id.tvTime);
         tvDate = findViewById(R.id.tvDate);
+        btnApproval = findViewById(R.id.btnApproval);
+
+        btnApproval.setOnClickListener(v -> {
+            Intent intent = new Intent(this, AdminApprovalActivity.class);
+            startActivity(intent);
+            overridePendingTransition(0, 0);
+        });
 
         tvTotalBorrowed = findViewById(R.id.tvTotalBorrowed);
         tvTotalBroken = findViewById(R.id.tvTotalBroken);
 
+        tvEmptyBroken = findViewById(R.id.tvEmptyBroken);
+        tvEmptyBorrowed = findViewById(R.id.tvEmptyBorrowed);
+
         rvBrokenTools = findViewById(R.id.rvBrokenTools);
         rvBorrowedTools = findViewById(R.id.rvBorrowedTools);
-        adminNavView = findViewById(R.id.adminNavView);
         tvSeeAllBroken = findViewById(R.id.tvBrokenSeeMore);
         tvSeeAllBorrowed = findViewById(R.id.tvSeeAllBorrowed);
 
@@ -86,48 +88,16 @@ public class AdminDashboardActivity extends AppCompatActivity {
             Intent intent = new Intent(AdminDashboardActivity.this, ToolListActivity.class);
             intent.putExtra("OPEN_FILTER", "RUSAK");
             startActivity(intent);
+            overridePendingTransition(0, 0);
         });
 
         tvSeeAllBorrowed.setOnClickListener(v -> {
             Intent intent = new Intent(AdminDashboardActivity.this, ToolListActivity.class);
             intent.putExtra("FILTER_MODE", "BORROWED");
             startActivity(intent);
+            overridePendingTransition(0, 0);
         });
 
-        adminNavView.setSelectedItemId(R.id.admin_nav_home);
-
-        adminNavView.setOnItemSelectedListener(item -> {
-            int itemId = item.getItemId();
-            Intent intent;
-
-            if (itemId == R.id.admin_nav_home) {
-                return true;
-
-            } else if (itemId == R.id.admin_nav_tools) {
-                intent = new Intent(AdminDashboardActivity.this, ToolListActivity.class);
-                startActivity(intent);
-                return true;
-
-            } else if (itemId == R.id.admin_add_item) {
-                intent = new Intent(AdminDashboardActivity.this, AddToolActivity.class);
-                startActivity(intent);
-                return true;
-
-            } else if (itemId == R.id.admin_nav_report) {
-                // TODO: Open admin report page
-                return true;
-
-            } else if (itemId == R.id.admin_nav_profil) {
-                intent = new Intent(AdminDashboardActivity.this, ProfileActivity.class);
-                startActivity(intent);
-                return true;
-            }
-
-            return false;
-        });
-
-
-        // Load data dan setup Recycler
         loadAdminName();
         loadStatistics();
         setupBrokenToolsRecycler();
@@ -139,9 +109,8 @@ public class AdminDashboardActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (adminNavView.getSelectedItemId() != R.id.navigation_home){
-            adminNavView.setSelectedItemId(R.id.navigation_home);
-        }
+        loadStatistics();
+        loadDashboardTools();
     }
 
     private void loadAdminName() {
@@ -151,7 +120,7 @@ public class AdminDashboardActivity extends AppCompatActivity {
 
         if (uid == null) return;
 
-        db.getUserByID(uid, user -> {
+        userDA.getUserByID(uid, user -> {
             if (user != null && user.getName() != null) {
                 tvAdminName.setText(user.getName());
             } else {
@@ -161,11 +130,11 @@ public class AdminDashboardActivity extends AppCompatActivity {
     }
 
     private void loadStatistics() {
-        db.getBorrowedToolsCount(count -> {
+        toolsDA.getBorrowedToolsCount(count -> {
             tvTotalBorrowed.setText(String.valueOf(count));
         });
 
-        db.getBrokenToolsCount(count -> {
+        toolsDA.getBrokenToolsCount(count -> {
             tvTotalBroken.setText(String.valueOf(count));
         });
     }
@@ -187,11 +156,13 @@ public class AdminDashboardActivity extends AppCompatActivity {
         });
     }
     private void loadDashboardTools() {
-        db.getAllTools(tools -> {
+        toolsDA.getAllTools(tools -> {
 
             if (tools == null || tools.isEmpty()) {
-                brokenToolsAdapter.notifyDataSetChanged();
-                borrowedToolsAdapter.notifyDataSetChanged();
+                rvBrokenTools.setVisibility(View.GONE);
+                tvEmptyBroken.setVisibility(View.VISIBLE);
+                rvBorrowedTools.setVisibility(View.GONE);
+                tvEmptyBorrowed.setVisibility(View.VISIBLE);
                 return;
             }
 
@@ -211,6 +182,22 @@ public class AdminDashboardActivity extends AppCompatActivity {
                 }
             }
 
+            if (brokenToolsList.isEmpty()) {
+                rvBrokenTools.setVisibility(View.GONE);
+                tvEmptyBroken.setVisibility(View.VISIBLE);
+            } else {
+                rvBrokenTools.setVisibility(View.VISIBLE);
+                tvEmptyBroken.setVisibility(View.GONE);
+            }
+
+            if (borrowedToolsList.isEmpty()) {
+                rvBorrowedTools.setVisibility(View.GONE);
+                tvEmptyBorrowed.setVisibility(View.VISIBLE);
+            } else {
+                rvBorrowedTools.setVisibility(View.VISIBLE);
+                tvEmptyBorrowed.setVisibility(View.GONE);
+            }
+
             brokenToolsAdapter.notifyDataSetChanged();
             borrowedToolsAdapter.notifyDataSetChanged();
         });
@@ -220,19 +207,35 @@ public class AdminDashboardActivity extends AppCompatActivity {
 
     private void setupBrokenToolsRecycler() {
         rvBrokenTools.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        brokenToolsAdapter = new BrokenToolsAdapter(brokenToolsList);
+        brokenToolsAdapter = new BrokenToolsAdapter(brokenToolsList, tool -> openToolDetail(tool));
         rvBrokenTools.setAdapter(brokenToolsAdapter);
     }
 
     private void setupBorrowedToolsRecycler() {
         rvBorrowedTools.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        borrowedToolsAdapter = new BorrowedToolsAdapter(borrowedToolsList);
+        borrowedToolsAdapter = new BorrowedToolsAdapter(borrowedToolsList, tool -> openToolDetail(tool));
         rvBorrowedTools.setAdapter(borrowedToolsAdapter);
+    }
+
+    private void openToolDetail(Tool tool) {
+        Intent intent = new Intent(this, AdminToolDetailActivity.class);
+        intent.putExtra("TOOL_ID", tool.getId());
+        intent.putExtra("TOOL_NAME", tool.getName());
+        intent.putExtra("TOOL_DESCRIPTION", tool.getDescription());
+        intent.putExtra("TOOL_STATUS", tool.getStatus());
+        intent.putExtra("TOOL_CONDITION", tool.getToolStatus());
+        intent.putExtra("TOOL_IMAGE_URL", tool.getImageUrl());
+        startActivity(intent);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         timeHandler.removeCallbacksAndMessages(null);
+    }
+
+    @Override
+    protected int getNavigationMenuItemId() {
+        return R.id.admin_nav_home;
     }
 }

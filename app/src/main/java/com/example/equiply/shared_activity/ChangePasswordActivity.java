@@ -20,7 +20,7 @@ import com.google.firebase.auth.FirebaseUser;
 public class ChangePasswordActivity extends AppCompatActivity {
 
     private TextInputEditText etCurrentPassword, etNewPassword, etConfirmPassword;
-    private MaterialButton btnSavePassword;
+    private MaterialButton btnSavePassword, btnCancel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,8 +31,16 @@ public class ChangePasswordActivity extends AppCompatActivity {
         etNewPassword = findViewById(R.id.etNewPassword);
         etConfirmPassword = findViewById(R.id.etConfirmPassword);
         btnSavePassword = findViewById(R.id.btnSavePassword);
+        btnCancel = findViewById(R.id.btnCancel);
 
         btnSavePassword.setOnClickListener(v -> updatePassword());
+        btnCancel.setOnClickListener(v -> finish());
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(0, 0);
     }
 
     private void updatePassword() {
@@ -50,6 +58,11 @@ public class ChangePasswordActivity extends AppCompatActivity {
             return;
         }
 
+        if (currPass.equals(newPass)) {
+            Toast.makeText(this, "Password baru tidak boleh sama dengan password saat ini", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         if (newPass.length() < 6) {
             Toast.makeText(this, "Password minimal 6 karakter", Toast.LENGTH_SHORT).show();
             return;
@@ -62,6 +75,8 @@ public class ChangePasswordActivity extends AppCompatActivity {
             redirectToLogin();
             return;
         }
+
+        setLoadingState(true);
 
         String email = user.getEmail();
 
@@ -79,17 +94,28 @@ public class ChangePasswordActivity extends AppCompatActivity {
                                     FirebaseAuth.getInstance().signOut();
                                     redirectToLogin();
                                 })
-                                .addOnFailureListener(e ->
-                                        Toast.makeText(this,
-                                                e.getMessage(),
-                                                Toast.LENGTH_SHORT).show()
-                                );
+                                .addOnFailureListener(e -> {
+                                    setLoadingState(false);
+                                    Toast.makeText(this,
+                                            e.getMessage(),
+                                            Toast.LENGTH_SHORT).show();
+                                });
                     } else {
+                        setLoadingState(false);
                         Toast.makeText(this,
                                 "Password Saat ini Salah",
                                 Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+    private void setLoadingState(boolean isProcessing) {
+        if (isProcessing) {
+            btnSavePassword.setEnabled(false);
+            btnSavePassword.setText("Saving...");
+        } else {
+            btnSavePassword.setEnabled(true);
+            btnSavePassword.setText("Save");
+        }
     }
 
     private void redirectToLogin() {

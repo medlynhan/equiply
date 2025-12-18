@@ -48,6 +48,6 @@ public class SessionManager {
     }
 
     public boolean isAdmin() {
-        return "admin".equals(getRole());
+        return "admin".equalsIgnoreCase(getRole());
     }
 }

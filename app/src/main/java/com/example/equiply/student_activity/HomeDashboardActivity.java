@@ -5,80 +5,157 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.equiply.BaseNavigationActivity;
 import com.example.equiply.R;
-import com.example.equiply.helper.NotificationDA;
+import com.example.equiply.adapter.StudentBorrowedAdapter;
+import com.example.equiply.admin_activity.AdminToolDetailActivity;
+import com.example.equiply.database.BorrowHistoryDA;
+import com.example.equiply.database.NotificationDA;
+import com.example.equiply.database.ToolsDA;
+import com.example.equiply.helper.QRCodeScanner;
 import com.example.equiply.helper.SessionManager;
-import com.example.equiply.shared_activity.ProfileActivity;
+import com.example.equiply.model.BorrowHistory;
+import com.example.equiply.model.Tool;
 import com.example.equiply.shared_activity.ToolListActivity;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
-public class HomeDashboardActivity extends AppCompatActivity {
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
+
+public class HomeDashboardActivity extends BaseNavigationActivity {
     private SessionManager session;
-    private BottomNavigationView bottomNavigationView;
-
-    private TextView userName;
-
+    private ToolsDA toolsDA;
+    private BorrowHistoryDA borrowHistoryDA;
+    private TextView userName, tvTime, tvDate;
+    private TextView tvActiveLoanCount, tvDueTodayCount;
+    private TextView tvSeeAllItems, tvEmpty;
+    private StudentBorrowedAdapter adapter;
+    private RecyclerView rvBorrowedItems;
+    private ArrayList<BorrowHistory> borrowHistories;
+    private Button btnSearchTools, btnScanQR;
     private static final int NOTIFICATION_PERMISSION_CODE = 101;
+    private final Handler timeHandler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_home_dashboard);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0);
-            return insets;
-        });
 
         session = new SessionManager(this);
+        toolsDA = new ToolsDA(this);
+        borrowHistoryDA = new BorrowHistoryDA();
+        borrowHistories = new ArrayList<>();
 
         userName = findViewById(R.id.userName);
+        tvTime = findViewById(R.id.tvTime);
+        tvDate = findViewById(R.id.tvDate);
+
+        tvActiveLoanCount = findViewById(R.id.activeLoanCount);
+        tvDueTodayCount = findViewById(R.id.dueTodayCount);
+
+        tvSeeAllItems = findViewById(R.id.tvSeeAllItems);
+        tvEmpty = findViewById(R.id.tvEmptyActiveLoans);
+
+        rvBorrowedItems = findViewById(R.id.rvActiveItems);
+
+        btnSearchTools = findViewById(R.id.btnSearchTools);
+        btnScanQR = findViewById(R.id.btnScanQR);
 
         userName.setText(session.getName());
 
-        bottomNavigationView = findViewById(R.id.bottomNavigationView);
-        bottomNavigationView.setOnItemSelectedListener(item -> {
-            int itemId = item.getItemId();
-            Intent intent;
-            if(itemId == R.id.navigation_home){
-                return true;
+        startLiveClock();
+        setupRecyclerView();
+        
+        tvSeeAllItems.setOnClickListener(v -> redirectToHistory());
 
-            } else if (itemId == R.id.navigation_history) {
-                intent = new Intent(HomeDashboardActivity.this, HistoryActivity.class);
-                startActivity(intent);
-                return true;
+        btnSearchTools.setOnClickListener(v -> redirectToToolList());
+        setupQrScanner();
+    }
 
-            } else if (itemId == R.id.navigation_box) {
-                intent = new Intent(HomeDashboardActivity.this, ToolListActivity.class);
-                startActivity(intent);
-                return true;
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadStudentData();
+    }
 
-            } else if (itemId == R.id.navigation_notification) {
-                intent = new Intent(HomeDashboardActivity.this, NotificationActivity.class);
-                startActivity(intent);
-                return true;
+    private void setupRecyclerView() {
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        rvBorrowedItems.setLayoutManager(layoutManager);
 
-            } else if (itemId == R.id.navigation_profile) {
-                intent = new Intent(HomeDashboardActivity.this, ProfileActivity.class);
-                startActivity(intent);
-                return true;
+        adapter = new StudentBorrowedAdapter(this, borrowHistories);
+        rvBorrowedItems.setAdapter(adapter);
+    }
+
+    private void loadStudentData() {
+        String userId = session.getUserId();
+
+        borrowHistoryDA.getHistoryByUserId(userId, borrowHistories -> {
+            if (this.borrowHistories == null) this.borrowHistories = new ArrayList<>();
+
+            this.borrowHistories.clear();
+
+            int borrowedCounter = 0;
+            int dueTodayCounter = 0;
+
+            for (BorrowHistory history : borrowHistories) {
+                String returnDate = history.getReturnDate();
+
+                if ("Approved".equalsIgnoreCase(history.getStatus())
+                        || "Dipinjam".equalsIgnoreCase(history.getStatus())
+                        || "pending_return".equalsIgnoreCase(history.getStatus())) {
+                    borrowedCounter++;
+
+                    if (isOverdue(returnDate)) {
+                        dueTodayCounter++;
+                    }
+
+                    this.borrowHistories.add(history);
+                }
             }
 
-            return false;
+            tvActiveLoanCount.setText(String.valueOf(borrowedCounter));
+            tvDueTodayCount.setText(String.valueOf(dueTodayCounter));
 
+            if (this.borrowHistories.isEmpty()) {
+                rvBorrowedItems.setVisibility(View.GONE);
+                tvEmpty.setVisibility(View.VISIBLE);
+            } else {
+                rvBorrowedItems.setVisibility(View.VISIBLE);
+                tvEmpty.setVisibility(View.GONE);
+            }
+
+            adapter.notifyDataSetChanged();
         });
+    }
+
+    private boolean isOverdue(String returnDate) {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        try {
+            Date due = sdf.parse(returnDate);
+            Date today = sdf.parse(sdf.format(new Date()));
+
+            return today.after(due);
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     @Override
@@ -88,11 +165,8 @@ public class HomeDashboardActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        if (bottomNavigationView.getSelectedItemId() != R.id.navigation_home){
-            bottomNavigationView.setSelectedItemId(R.id.navigation_home);
-        }
+    protected int getNavigationMenuItemId() {
+        return R.id.navigation_home;
     }
 
     private void handleNotification() {
@@ -131,5 +205,96 @@ public class HomeDashboardActivity extends AppCompatActivity {
                 Toast.makeText(this, "Notifications disabled. Check history for alerts.", Toast.LENGTH_LONG).show();
             }
         }
+    }
+
+    private void startLiveClock() {
+        timeHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                String time = new SimpleDateFormat("h:mm a", Locale.getDefault())
+                        .format(new Date());
+                String date = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
+                        .format(new Date());
+
+                tvTime.setText(time);
+                tvDate.setText(date);
+
+                timeHandler.postDelayed(this, 1000);
+            }
+        });
+    }
+
+    private void setupQrScanner() {
+        btnScanQR.setOnClickListener(v -> {
+            IntentIntegrator intentIntegrator = new IntentIntegrator(this);
+
+            intentIntegrator.setCaptureActivity(QRCodeScanner.class);
+            intentIntegrator.setPrompt(" ");
+            intentIntegrator.setOrientationLocked(false);
+            intentIntegrator.setBeepEnabled(false);
+            intentIntegrator.initiateScan();
+        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        IntentResult intentResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+
+        if (intentResult != null) {
+            if (intentResult.getContents() == null) {
+                Toast.makeText(getBaseContext(), "Cancelled", Toast.LENGTH_SHORT).show();
+            } else {
+                String toolId = intentResult.getContents();
+
+                if (toolId.contains(".") || toolId.contains("#") || toolId.contains("$") ||
+                        toolId.contains("[") || toolId.contains("]") || toolId.contains("/")) {
+                    Toast.makeText(getBaseContext(), "Invalid QR Code format.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                toolsDA.getToolById(toolId, tool -> {
+                    if (tool != null) {
+                        openToolDetail(tool);
+                    } else {
+                        Toast.makeText(getBaseContext(), "QR is not Valid", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    private void openToolDetail(Tool tool) {
+        Intent intent;
+        if (session.isAdmin()) {
+            intent = new Intent(this, AdminToolDetailActivity.class);
+            intent.putExtra("TOOL_ID", tool.getId());
+            intent.putExtra("TOOL_NAME", tool.getName());
+            intent.putExtra("TOOL_DESCRIPTION", tool.getDescription());
+            intent.putExtra("TOOL_STATUS", tool.getStatus());
+            intent.putExtra("TOOL_CONDITION", tool.getToolStatus());
+            intent.putExtra("TOOL_IMAGE_URL", tool.getImageUrl());
+        } else {
+            intent = new Intent(this, ToolDetailActivity.class);
+            intent.putExtra("TOOL_ID", tool.getId());
+            intent.putExtra("TOOL_NAME", tool.getName());
+        }
+        startActivity(intent);
+        overridePendingTransition(0, 0);
+    }
+
+    private void redirectToHistory() {
+        Intent intent = new Intent(this, HistoryActivity.class);
+        startActivity(intent);
+        overridePendingTransition(0, 0);
+    }
+
+    private void redirectToToolList() {
+        Intent intent = new Intent(this, ToolListActivity.class);
+        startActivity(intent);
+        overridePendingTransition(0, 0);
     }
 }

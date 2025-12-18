@@ -7,12 +7,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import com.bumptech.glide.Glide;
 import com.example.equiply.R;
-import com.example.equiply.helper.RealtimeDatabaseFirebase;
+import com.example.equiply.database.ToolsDA;
 import com.example.equiply.model.Tool;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
@@ -26,7 +30,7 @@ public class AdminToolDetailActivity extends AppCompatActivity {
     private MaterialButton btnEdit, btnDelete;
     private FloatingActionButton fabBack;
 
-    private RealtimeDatabaseFirebase db;
+    private ToolsDA toolsDA;
 
     private String toolId;
     private String toolName;
@@ -38,14 +42,27 @@ public class AdminToolDetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_admin_tool_detail);
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
 
         initializeViews();
-        db = new RealtimeDatabaseFirebase(this);
+        toolsDA = new ToolsDA(this);
 
         getIntentData();
         displayToolData();
         setupButtons();
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(0, 0);
     }
 
     private void initializeViews() {
@@ -141,7 +158,7 @@ public class AdminToolDetailActivity extends AppCompatActivity {
     }
 
     private void deleteTool() {
-        db.deleteTool(toolId, success -> {
+        toolsDA.deleteTool(toolId, success -> {
              if (success) {
                  Toast.makeText(this, "Alat berhasil dihapus", Toast.LENGTH_SHORT).show();
                  finish();
@@ -181,7 +198,7 @@ public class AdminToolDetailActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         if (toolId != null) {
-            db.getToolById(toolId, this::updateToolUI);
+            toolsDA.getToolById(toolId, this::updateToolUI);
         }
     }
 }

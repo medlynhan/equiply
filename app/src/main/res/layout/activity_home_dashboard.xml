@@ -9,26 +9,11 @@
     android:fitsSystemWindows="false"
     tools:context=".student_activity.HomeDashboardActivity">
 
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottomNavigationView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="@color/white_modif"
-        app:itemActiveIndicatorStyle="@null"
-        app:itemIconSize="30sp"
-        app:itemIconTint="@drawable/selector_nav_items"
-        app:itemTextColor="@drawable/selector_nav_items"
-        app:labelVisibilityMode="labeled"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:menu="@menu/bottom_menu" />
-
     <ScrollView
         android:id="@+id/content_scroll_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/bottomNavigationView"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -36,21 +21,23 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="16dp">
+            android:layout_marginTop="40dp"
+            android:paddingBottom="100dp">
 
             <TextView
-                android:id="@+id/welcomeMessage"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="48dp"
-                android:layout_marginEnd="16dp"
-                android:text="Selamat datang,"
-                android:textColor="@color/black_modif"
-                android:textSize="18sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+            android:id="@+id/welcomeMessage"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="48dp"
+            android:layout_marginEnd="16dp"
+            android:text="Selamat datang,"
+            android:textColor="@color/black_modif"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/userName"
@@ -65,6 +52,33 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/welcomeMessage" />
+
+            <TextView
+                android:id="@+id/tvTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="-15dp"
+                android:text="9:27 AM"
+                android:textColor="@color/blue_medium"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@id/welcomeMessage"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/welcomeMessage"
+                app:layout_constraintVertical_bias="1.0" />
+
+            <TextView
+                android:id="@+id/tvDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:text="30 Oktober 2025"
+                android:textColor="@color/blue_medium"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                app:layout_constraintTop_toBottomOf="@+id/tvTime"
+                app:layout_constraintRight_toRightOf="parent"/>
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/activeLoansCard"
@@ -100,20 +114,19 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Pinjaman Aktif"
+                            android:text="Pinjaman"
                             android:textColor="@color/black_modif"
                             android:textSize="14sp" />
                         <TextView
                             android:id="@+id/activeLoanCount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="3"
+                            android:text="0"
                             android:textColor="@color/black_modif"
                             android:textSize="20sp"
                             android:textStyle="bold" />
                     </LinearLayout>
                 </LinearLayout>
-
             </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.card.MaterialCardView
@@ -149,23 +162,119 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Kembali Hari Ini"
+                            android:text="Kembali"
                             android:textColor="@color/black_modif"
                             android:textSize="14sp" />
                         <TextView
                             android:id="@+id/dueTodayCount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="1"
+                            android:text="0"
                             android:textColor="@color/black_modif"
                             android:textSize="20sp"
                             android:textStyle="bold" />
                     </LinearLayout>
                 </LinearLayout>
-
             </com.google.android.material.card.MaterialCardView>
 
+            <TextView
+                android:id="@+id/tvYourItemsTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:layout_marginStart="16dp"
+                android:text="Barang yang Anda Pinjam"
+                android:textColor="@color/black_modif"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/activeLoansCard" />
 
+            <TextView
+                android:id="@+id/tvSeeAllItems"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:text="Lihat Semua"
+                android:textColor="@color/blue_medium"
+                android:textStyle="bold"
+                app:layout_constraintBaseline_toBaselineOf="@id/tvYourItemsTitle"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <FrameLayout
+                android:id="@+id/borrowedListContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                app:layout_constraintTop_toBottomOf="@id/tvYourItemsTitle"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <TextView
+                    android:id="@+id/tvEmptyActiveLoans"
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:gravity="center"
+                    android:text="Tidak ada barang yang sedang dipinjam"
+                    android:textColor="#9E9E9E"
+                    android:textSize="14sp"
+                    android:visibility="gone"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvActiveItems"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clipToPadding="false"
+                    android:nestedScrollingEnabled="false"
+                    android:orientation="horizontal"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    tools:listitem="@layout/layout_borrowed_tool_student" />
+            </FrameLayout>
+
+            <LinearLayout
+                android:id="@+id/quickActionsContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toBottomOf="@id/borrowedListContainer">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnSearchTools"
+                    android:layout_width="0dp"
+                    android:layout_height="60dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp"
+                    android:text="Cari Alat"
+                    android:textSize="14sp"
+                    app:icon="@android:drawable/ic_menu_search"
+                    app:iconTint="@color/blue_medium"
+                    app:iconGravity="textStart"
+                    app:backgroundTint="@color/white_modif"
+                    android:textColor="@color/blue_medium"
+                    app:strokeColor="@color/blue_medium"
+                    app:strokeWidth="1dp"
+                    app:cornerRadius="10dp"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnScanQR"
+                    android:layout_width="0dp"
+                    android:layout_height="60dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    android:text="Scan QR"
+                    android:textSize="14sp"
+                    app:icon="@drawable/qr_code_icon"
+                    app:iconGravity="textStart"
+                    app:backgroundTint="@color/blue_medium"
+                    android:textColor="@color/white_modif"
+                    app:cornerRadius="10dp"/>
+
+            </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

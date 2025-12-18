@@ -2,18 +2,22 @@ package com.example.equiply.student_activity;
 
 import android.content.Intent;
 import android.graphics.Color;
+import androidx.core.graphics.Insets;
+import android.os.Build;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import com.bumptech.glide.Glide;
 import com.example.equiply.R;
 import com.example.equiply.helper.AuthFirebase;
-import com.example.equiply.helper.BorrowHistoryDA;
-import com.example.equiply.helper.RealtimeDatabaseFirebase;
+import com.example.equiply.database.BorrowHistoryDA;
+import com.example.equiply.database.ToolsDA;
 import com.example.equiply.model.Tool;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
@@ -28,13 +32,19 @@ public class ToolDetailActivity extends AppCompatActivity {
     private String userId;
     private AuthFirebase auth;
     private BorrowHistoryDA borrowHistoryDA;
-    private RealtimeDatabaseFirebase db;
+    private ToolsDA toolsDA;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_tool_detail);
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
 
         ivToolImage = findViewById(R.id.ivToolImage);
         tvToolName = findViewById(R.id.tvToolName);
@@ -46,8 +56,8 @@ public class ToolDetailActivity extends AppCompatActivity {
         statusBadge = findViewById(R.id.statusBadge);
 
         borrowHistoryDA = new BorrowHistoryDA();
-        db = new RealtimeDatabaseFirebase(this);
-        auth = new AuthFirebase(this);
+        toolsDA = new ToolsDA(this);
+        auth = new AuthFirebase();
 
         String toolId = getIntent().getStringExtra("TOOL_ID");
 
@@ -58,8 +68,14 @@ public class ToolDetailActivity extends AppCompatActivity {
         findViewById(R.id.fabBack).setOnClickListener(v -> finish());
     }
 
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(0, 0);
+    }
+
     private void loadToolDetail(String toolId) {
-        db.getToolById(toolId, tool -> {
+        toolsDA.getToolById(toolId, tool -> {
             if (tool != null) {
                 showToolData(tool);
             }
@@ -108,6 +124,7 @@ public class ToolDetailActivity extends AppCompatActivity {
                     intent.putExtra("TOOL_PICTURE", tool.getImageUrl());
                     intent.putExtra("TOOL_STATUS", tool.getToolStatus());
                     intent.putExtra("USER_ID", userId);
+                    overridePendingTransition(0, 0);
                     startActivity(intent);
                 });
             }

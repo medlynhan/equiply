@@ -1,4 +1,4 @@
-package com.example.equiply.helper;
+package com.example.equiply.database;
 
 import androidx.annotation.NonNull;
 
@@ -21,7 +21,16 @@ public class BorrowHistoryDA {
     }
 
     public void addBorrowHistory(BorrowHistory borrowHistory, Consumer<Boolean> callback){
-        mDatabase.child("history").push().setValue(borrowHistory).addOnCompleteListener(task -> {
+        String historyId = mDatabase.child("history").push().getKey();
+
+        if (historyId == null) {
+            callback.accept(false);
+            return;
+        }
+
+        borrowHistory.setId(historyId);
+
+        mDatabase.child("history").child(historyId).setValue(borrowHistory).addOnCompleteListener(task -> {
             callback.accept(task.isSuccessful());
         });
 
@@ -87,7 +96,7 @@ public class BorrowHistoryDA {
     public void getAllPendingRequests(Consumer<ArrayList<BorrowHistory>> callback) {
         mDatabase.child("history")
                 .orderByChild("status")
-                .equalTo("pending")
+                .equalTo("Pending")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -134,29 +143,57 @@ public class BorrowHistoryDA {
         });
     }
 
-    public void approveRequest(String requestId, String toolId, Consumer<Boolean> callback) {
-        mDatabase.child("borrow_requests")
+    public void updateHistoryStatus(String userId, String toolId, String newStatus) {
+        mDatabase.child("history")
+                .orderByChild("userId")
+                .equalTo(userId)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot data : snapshot.getChildren()) {
+                            String currentToolId = data.child("toolId").getValue(String.class);
+                            String currentStatus = data.child("status").getValue(String.class);
+
+                            if (toolId != null && toolId.equals(currentToolId) &&
+                                    (currentStatus.equalsIgnoreCase("Approved") ||
+                                            currentStatus.equalsIgnoreCase("Dipinjam") ||
+                                            currentStatus.equalsIgnoreCase("pending_return"))) {
+
+                                data.getRef().child("status").setValue(newStatus);
+                                if ("Returned".equalsIgnoreCase(newStatus)) {
+                                    data.getRef().child("actualReturnDate").setValue(System.currentTimeMillis());
+                                }
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) { }
+                });
+    }
+
+    public void approveRequest(String requestId, String toolId, String borrowerName, Consumer<Boolean> callback) {
+        mDatabase.child("history")
                 .child(requestId)
                 .child("status")
-                .setValue("approved")
+                .setValue("Approved")
                 .addOnSuccessListener(unused -> {
 
-                    mDatabase.child("tools")
-                            .child(toolId)
-                            .child("status")
-                            .setValue("dipinjam")
-                            .addOnSuccessListener(unused2 -> callback.accept(true))
-                            .addOnFailureListener(e -> callback.accept(false));
+                    DatabaseReference toolRef = mDatabase.child("tools").child(toolId);
+                    toolRef.child("status").setValue("Dipinjam");
+                    toolRef.child("lastBorrower").setValue(borrowerName);
+
+                    callback.accept(true);
 
                 })
                 .addOnFailureListener(e -> callback.accept(false));
     }
 
     public void rejectRequest(String requestId, Consumer<Boolean> callback) {
-        mDatabase.child("borrow_requests")
+        mDatabase.child("history")
                 .child(requestId)
                 .child("status")
-                .setValue("rejected")
+                .setValue("Rejected")
                 .addOnSuccessListener(unused -> callback.accept(true))
                 .addOnFailureListener(e -> callback.accept(false));
     }

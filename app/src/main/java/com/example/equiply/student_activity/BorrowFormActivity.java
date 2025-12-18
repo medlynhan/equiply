@@ -16,7 +16,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.bumptech.glide.Glide;
 import com.example.equiply.R;
-import com.example.equiply.helper.BorrowHistoryDA;
+import com.example.equiply.database.BorrowHistoryDA;
 import com.example.equiply.model.BorrowHistory;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -76,6 +76,12 @@ public class BorrowFormActivity extends AppCompatActivity {
 
         btnSubmit.setOnClickListener(v -> submitForm());
         findViewById(R.id.fabBack).setOnClickListener(v -> finish());
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(0, 0);
     }
 
     private void showDatePicker(TextInputEditText target) {
