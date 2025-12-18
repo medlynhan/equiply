@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,14 +20,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.equiply.BaseNavigationActivity;
 import com.example.equiply.R;
 import com.example.equiply.adapter.StudentBorrowedAdapter;
+import com.example.equiply.admin_activity.AdminToolDetailActivity;
 import com.example.equiply.database.BorrowHistoryDA;
 import com.example.equiply.database.NotificationDA;
 import com.example.equiply.database.ToolsDA;
 import com.example.equiply.helper.QRCodeScanner;
 import com.example.equiply.helper.SessionManager;
 import com.example.equiply.model.BorrowHistory;
+import com.example.equiply.model.Tool;
 import com.example.equiply.shared_activity.ToolListActivity;
 import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -230,6 +234,56 @@ public class HomeDashboardActivity extends BaseNavigationActivity {
             intentIntegrator.setBeepEnabled(false);
             intentIntegrator.initiateScan();
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        IntentResult intentResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+
+        if (intentResult != null) {
+            if (intentResult.getContents() == null) {
+                Toast.makeText(getBaseContext(), "Cancelled", Toast.LENGTH_SHORT).show();
+            } else {
+                String toolId = intentResult.getContents();
+
+                if (toolId.contains(".") || toolId.contains("#") || toolId.contains("$") ||
+                        toolId.contains("[") || toolId.contains("]") || toolId.contains("/")) {
+                    Toast.makeText(getBaseContext(), "Invalid QR Code format.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                toolsDA.getToolById(toolId, tool -> {
+                    if (tool != null) {
+                        openToolDetail(tool);
+                    } else {
+                        Toast.makeText(getBaseContext(), "QR is not Valid", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    private void openToolDetail(Tool tool) {
+        Intent intent;
+        if (session.isAdmin()) {
+            intent = new Intent(this, AdminToolDetailActivity.class);
+            intent.putExtra("TOOL_ID", tool.getId());
+            intent.putExtra("TOOL_NAME", tool.getName());
+            intent.putExtra("TOOL_DESCRIPTION", tool.getDescription());
+            intent.putExtra("TOOL_STATUS", tool.getStatus());
+            intent.putExtra("TOOL_CONDITION", tool.getToolStatus());
+            intent.putExtra("TOOL_IMAGE_URL", tool.getImageUrl());
+        } else {
+            intent = new Intent(this, ToolDetailActivity.class);
+            intent.putExtra("TOOL_ID", tool.getId());
+            intent.putExtra("TOOL_NAME", tool.getName());
+        }
+        startActivity(intent);
+        overridePendingTransition(0, 0);
     }
 
     private void redirectToHistory() {
